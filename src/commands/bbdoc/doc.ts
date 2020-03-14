@@ -63,7 +63,7 @@ Report generated at report/index.html
       config=defaultConfig;
     }
     else {
-      config=require(this.flags.config);
+      config=await fs.readJson(this.flags.config);
     }
 
     // find the html templates
