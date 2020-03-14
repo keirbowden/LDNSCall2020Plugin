@@ -1,0 +1,9 @@
+
+{
+  "commandDescription": "generate documentation for an org",
+  "configFlagDescription": "configuration file",
+  "reportDirFlagDescription": "directory to store the generated report",
+  "docsDirFlagDescription": "directory containing additional documentation",
+  "sourceDirFlagDescription": "source directory containing the org metadata",
+  "errorNoOrgResults": "No results found for the org '%s'."
+}
