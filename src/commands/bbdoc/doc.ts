@@ -68,7 +68,7 @@ Report generated at report/index.html
 
     // find the html templates
     const pluginRoot=await fs.traverseForFile(__dirname, 'package.json');
-    const templateDirName=join(pluginRoot, 'src', 'shared', 'html');
+    const templateDirName=join(pluginRoot, 'html');
     const packageJSON=await fs.readFile(join(pluginRoot, 'package.json'), 'utf-8');
     const pkg=JSON.parse(packageJSON,);
     config.version=pkg.version;
