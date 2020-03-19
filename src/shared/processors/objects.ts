@@ -319,6 +319,14 @@ class ObjectProcessor {
                     result += '<strong>Lookup</strong> : ' + field.referenceTo;
                     break;
         
+                case 'MasterDetail':
+                    result += '<strong>Master-Detail</strong> : ' + field.referenceTo;
+                    break;
+        
+                case 'Summary':
+                    result += '<strong>Roll Up Summary</strong> : ' + field.summaryOperation + '(' + field.summaryForeignKey + ')';
+                    break;
+        
                 case 'Html':
                 case 'LongTextArea':
                     result += '<strong>Length</strong> : ' + field.length + '<br/>';
