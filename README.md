@@ -17,7 +17,7 @@ $ npm install -g bbdoc
 $ sfdx COMMAND
 running command...
 $ sfdx (-v|--version|version)
-bbdoc/1.0.4 darwin-x64 node-v8.11.3
+bbdoc/1.0.6 darwin-x64 node-v8.11.3
 $ sfdx --help [COMMAND]
 USAGE
   $ sfdx COMMAND
@@ -57,5 +57,5 @@ EXAMPLE
   Report generated at report/index.html
 ```
 
-_See code: [lib/commands/bbdoc/doc.js](https://github.com/keirbowden/LDNSCall2020Plugin/blob/v1.0.4/lib/commands/bbdoc/doc.js)_
+_See code: [lib/commands/bbdoc/doc.js](https://github.com/keirbowden/LDNSCall2020Plugin/blob/v1.0.6/lib/commands/bbdoc/doc.js)_
 <!-- commandsstop -->

@@ -354,10 +354,7 @@ class ObjectProcessor {
                             var vsName=field.valueSet.valueSetName;
                             result+='<b>Global Value Set (' + vsName +')</b><br/>';
                             if (field.gvs) {
-                                for (var idx=0; idx<field.gvs.GlobalValueSet.customValue.length; idx++) {
-                                    var value=field.gvs.GlobalValueSet.customValue[idx].fullName + '<br/>';
-                                    result+='&nbsp;&nbsp;' + value;
-                                }
+                                field.gvs.GlobalValueSet.customValue.forEach(item => result+='&nbsp;&nbsp;' + item.fullName + '<br/>');
                             }
                             else {
                                 result+='Not version controlled';
@@ -365,10 +362,7 @@ class ObjectProcessor {
                         }
                         else if (field.valueSet.valueSetDefinition) {
                             result+='<b>Values</b><br/>';
-                            for (var idx=0; idx<field.valueSet.valueSetDefinition.value.length; idx++) {
-                                var value=field.valueSet.valueSetDefinition.value[idx].fullName + '<br/>';
-                                result+='&nbsp;&nbsp;' + value;
-                            }
+                            field.valueSet.valueSetDefinition.value.forEach(item => result+='&nbsp;&nbsp;' + item.value + '<br/>');
                         }
                     }
                     break;
