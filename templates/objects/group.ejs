@@ -100,7 +100,7 @@
                 <% }); %>
             </table>
             
-            <% if (typeof object.validationRules == 'object' && object.validationRules ) { %>
+            <% if (typeof object.validationRules == 'object' && object.validationRules && object.validationRules.length>1) { %>
                 <p style="padding-top:1em; font-size:1.25em">  
                     <strong>Validation Rules</strong>
                 </p>

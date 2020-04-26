@@ -137,7 +137,8 @@ class ObjectProcessor {
                 let contentObj:ObjectContent={name: mem.member.name, 
                                 label: label,
                                 sfObject: md.CustomObject,
-                                fields: []};
+                                fields: [],
+                                validationRules: []};
                 contentGroup.objects.push(contentObj);
                                 
                 this.processFields(mem.member, contentObj);
