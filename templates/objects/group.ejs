@@ -1,0 +1,131 @@
+<html>
+    <head>
+        <style>
+            html,
+            body {
+                font-size: 12px;
+                font-family: sans-serif;
+                margin: 1em 4em;
+            }
+
+            table {
+                width: 100%;
+                font-size: 12px;
+                border-collapse: collapse;
+            }
+
+            th {
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+
+            td,
+            th {
+                text-align: left;
+                border: 1px solid black;
+                padding: 5px;
+            }
+
+            h1 {
+                text-align: center;
+                color: #fe7c40;
+            }
+
+            h2 {
+                margin-top: 2em;
+                color: #fe7c40;
+            }
+
+            p {
+                text-align: left;
+            }
+
+            figcaption {
+                text-align: center;
+            }
+
+            .centeredimage {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;
+            }
+
+            li {
+                padding-bottom: 0.4em;
+            }
+
+            .footer {
+                font-size: 10px;
+                padding: 20px 20px 30px 20px;
+                text-align: center;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+
+    <body>
+        <a href="objects.html">Objects</a>
+        <h1><%= content.title %></h1>
+        <p style="font-size: 1.2em"><%= content.description %></p> 
+
+        <h2>Menu</h2>
+        <ul>
+            <% content.menuItems.forEach(function(menuItem){ %>
+                <li><a style="font-size: 1.2em;" href="#<%= menuItem.href %>"><%= menuItem.title %> </a></li>
+            <% }); %>
+        </ul>
+        
+        <% content.objects.forEach(function(object){ %>
+            <h2><a name="<%= object.name %>"><%= object.label %></a></h2>
+            <p style="font-size:1.25em"><strong>API Name : </strong><%= object.name %></p>
+            <p><span style="font-size:1.25em"><strong>Description : </strong><%= object.sfObject.description %></span></p>
+            <p style="padding-top:1em; font-size:1.25em"><strong>Fields</strong></p>
+            <table>
+                <tr>
+                    <th style="width:17%">Name</th>
+                    <th style="width:15%">Label</th>
+                    <th style="width:10%">Type</th>
+                    <th style="width:40%">Description</th>
+                    <th style="width:18%">Info</th>
+                </tr>
+                <% object.fields.forEach(function(field){ %>
+                    <tr style="background-color: <%= field.background %>">
+                        <td><%= field.fullName %></td>
+                        <td><%= field.label %></td>
+                        <td><%= field.fullType %></td>
+                        <td><%= field.description %></td>
+                        <td><%- field.additionalInfo %></td>
+                    </tr>
+                <% }); %>
+            </table>
+            
+            <% if (typeof object.validationRules == 'object' && object.validationRules ) { %>
+                <p style="padding-top:1em; font-size:1.25em">  
+                    <strong>Validation Rules</strong>
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                         <th>Active</th>
+                         <th>Criteria</th>
+                    </tr>
+            
+                    <% object.validationRules.forEach(function(validationRule) { %>
+                        <tr style="<%= validationRule.style %>">
+                            <td><%= validationRule.fullName %></td>
+                            <td><%= validationRule.description %></td>
+                            <td><%= validationRule.active %></td>
+                            <td><%= validationRule.errorConditionFormula %></td>
+                        </tr>
+                    <% }); %>
+                </table>
+            <% }; %>
+        <% }); %>
+        <div class="footer" style="float:right;">Generated <%=footer.generatedDate%></div>
+        <div class="footer" style="float:left;">BrightGen Org Documentor v<%=footer.version%></div>
+    </body>
+
+</html>

@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <style>
+            html,
+            body {
+                font-size: 12px;
+                font-family: sans-serif;
+                margin: 1em 4em;
+            }
+
+            table {
+                width: 100%;
+                font-size: 12px;
+                border-collapse: collapse;
+            }
+
+            th {
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+
+            td,
+            th {
+                text-align: left;
+                border: 1px solid black;
+                padding: 5px;
+            }
+
+            h1 {
+                text-align: center;
+                color: #fe7c40;
+            }
+
+            h2 {
+                margin-top: 2em;
+                color: #fe7c40;
+            }
+
+            p {
+                text-align: left;
+            }
+
+            figcaption {
+                text-align: center;
+            }
+
+            .centeredimage {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;
+            }
+
+            li {
+                padding-bottom: 0.4em;
+            }
+
+            .footer {
+                font-size: 10px;
+                padding: 20px 20px 30px 20px;
+                text-align: center;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+
+    <body>
+        <a href="../index.html">Home</a>
+        <h1>Objects</h1>
+        <table>
+            <tr>
+                <th>Group</th>
+                <th>Detail</th>
+            </tr>
+            <% content.groups.forEach(function(group){ %>
+                <tr>
+                        <td><%= group.title %></td>
+                    <td><a href="<%= group.link %>">Click to View</a></td>
+                </tr>
+            <% }); %>
+        </table>
+        <h1><%= content.counter %> objects processed</h1>
+        <div class="footer" style="float:right;">Generated <%=footer.generatedDate%></div>
+        <div class="footer" style="float:left;">BrightGen Org Documentor v<%=footer.version%></div>
+    </body>
+
+</html>
