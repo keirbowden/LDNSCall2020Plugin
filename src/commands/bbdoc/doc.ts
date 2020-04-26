@@ -68,23 +68,13 @@ Report generated at report/index.html
 
     // find the html templates
     const pluginRoot=await fs.traverseForFile(__dirname, 'package.json');
-    const templateDirName=join(pluginRoot, 'html');
+    const ejsTemplateDirName=join(pluginRoot, 'templates');
 
      // get the version
      const packageJSON=await fs.readFile(join(pluginRoot, 'package.json'), 'utf-8');
     const pkg=JSON.parse(packageJSON);
     config.version=pkg.version;
-    try {
-      await fs.stat(templateDirName);
-    }
-    catch (err) {
-      if (err && err.code === 'ENOENT') {
-        throw new Error('No template directory found named ' + templateDirName);
-      }
-      else throw err;
-    }
-
-    let documentor=new Documentor(sourceDir, reportDir, templateDirName, config);
+    let documentor=new Documentor(sourceDir, reportDir, config, ejsTemplateDirName);
 
     this.ux.log('Documenting Org');
     documentor.document();

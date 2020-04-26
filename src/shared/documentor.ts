@@ -1,78 +1,52 @@
 import { join } from 'path';
-import { readFileSync } from 'fs';
-import { appendFileSync } from 'fs';
 import { writeFileSync } from 'fs';
 import {HTMLGenerator} from './htmlGenerator';
-import {ObjectProcessor} from './processors/objects';
-import { DocumentorConfig } from './types';
+import {ObjectProcessor} from './processors/object/objects';
+import { DocumentorConfig } from './configtypes';
+import { IndexContent } from './contenttypes';
 
 class Documentor {
     sourceDir : string;
     reportDir: string;
     docsDir : string;
-    templateDir : string;
     config : DocumentorConfig;
-    generatedDate : string;
     htmlGenerator : HTMLGenerator;
     indexFile: string;
+    indexContent : IndexContent;
+    ejsTemplateDirName: string;
 
-    constructor(sourceDir: string, reportDir: string, templateDir: string, config : DocumentorConfig) {
+    constructor(sourceDir: string, reportDir: string, config : DocumentorConfig, ejsTemplateDirName: string) {
         this.sourceDir=sourceDir;
         this.reportDir=reportDir;
-        this.templateDir=templateDir;
         this.config=config;
-        this.generatedDate=new Date().toISOString();
-        this.htmlGenerator=new HTMLGenerator(this.templateDir, this.config);
+        this.htmlGenerator=new HTMLGenerator(this.config, ejsTemplateDirName);
         this.indexFile=join(this.reportDir, 'index.html');
+        this.indexContent={links: []};
     }
     
-    startPage(outFile: string, level=1) {
-        let indexLink='';
-        if (1!==level) {
-            indexLink+='\n';
-            for (let idx=0; idx<level; idx++) {
-                indexLink+='../';
-            }
-            indexLink+='<a href="' + indexLink + 'index.html">Home</a>';    
-        }
-        writeFileSync(join(this.reportDir, outFile), this.getFragment('pageStart') + indexLink);
-    }
-
-    endPage(outFile: string) {
-        let content=this.getFragment('pageEnd');
-        content=content.replace('[GENDATE]', new Date().toISOString()).replace('[VERSION]', this.config.version);
-        appendFileSync(join(this.reportDir, outFile), content);
-    }
-
-    startMain() {
-        this.htmlGenerator.startPage(this.indexFile);
-        appendFileSync(this.indexFile, '    <h1>Org Report</h1>\n');
-    }
-
-    endMain() {
-        this.htmlGenerator.endPage(join(this.reportDir, 'index.html'));
-    }
-
-    getFragment(name : string) {
-        return readFileSync(join(this.templateDir, name + '.html'), 'utf8');
-    }
-
     document() {
-        this.startMain();
         for (let mdType of ['objects']) {
             if (this.config[mdType]!==undefined) {
-                this.process(mdType);
+                this.indexContent.links.push(this.process(mdType));
             }
         }        
-        this.endMain();
+        this.htmlGenerator.generateHTML('index.ejs', this.indexContent)
+        .then(html => {
+            writeFileSync(this.indexFile, html);
+
+        });
     }
 
     process(mdType) {
+        let link;
         switch (mdType) {
             case 'objects':
                 let objects=new ObjectProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
-                objects.process();
-        }
+                link=objects.process();
+                break;
+            }
+
+        return link;
     }
 }
 
