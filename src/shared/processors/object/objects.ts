@@ -46,8 +46,7 @@ class ObjectProcessor {
 
         this.generator.generateHTML(join('objects', 'objects.ejs'), this.content)
         .then(html => {
-            writeFileSync(this.indexFile, html);
-    
+            writeFileSync(this.indexFile, html);    
         });
 
         this.content.groups.forEach(group => {

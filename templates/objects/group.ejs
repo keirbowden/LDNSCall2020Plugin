@@ -82,7 +82,7 @@
             <h2><a name="<%= object.name %>"><%= object.label %></a></h2>
             <p style="font-size:1.25em"><strong>API Name : </strong><%= object.name %></p>
             <p><span style="font-size:1.25em"><strong>Description : </strong><%= object.sfObject.description %></span></p>
-            <% if (typeof object.recordTypes == 'object' && object.recordTypes && object.recordTypes.length>1) { %>
+            <% if (typeof object.recordTypes == 'object' && object.recordTypes && object.recordTypes.length>0) { %>
                 <p style="padding-top:1em; font-size:1.25em">  
                     <strong>Record Types</strong>
                 </p>
@@ -99,12 +99,13 @@
                         <tr>
                             <td><%= recordType.label %></td>
                             <td><%= recordType.fullName %></td>
-                            <td><%= recordType.description %></td>
+                            <td><%- recordType.description %></td>
                             <td><%= recordType.active %></td>
                         </tr>
                     <% }); %>
                 </table>
-            <% }; %>            <p style="padding-top:1em; font-size:1.25em"><strong>Fields</strong></p>
+            <% }; %>            
+            <p style="padding-top:1em; font-size:1.25em"><strong>Fields</strong></p>
             <table>
                 <tr>
                     <th style="width:17%">Name</th>
@@ -124,7 +125,7 @@
                 <% }); %>
             </table>
             
-            <% if (typeof object.validationRules == 'object' && object.validationRules && object.validationRules.length>1) { %>
+            <% if (typeof object.validationRules == 'object' && object.validationRules && object.validationRules.length>0) { %>
                 <p style="padding-top:1em; font-size:1.25em">  
                     <strong>Validation Rules</strong>
                 </p>
@@ -140,7 +141,7 @@
                     <% object.validationRules.forEach(function(validationRule) { %>
                         <tr>
                             <td><%= validationRule.fullName %></td>
-                            <td><%= validationRule.description %></td>
+                            <td><%- validationRule.description %></td>
                             <td><%= validationRule.active %></td>
                             <td><%- validationRule.errorConditionFormula %></td>
                         </tr>
