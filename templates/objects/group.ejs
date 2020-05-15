@@ -77,10 +77,34 @@
         </ul>
         
         <% content.objects.forEach(function(object){ %>
+            <div style="padding-top:1em;"/>
+            <hr/>
             <h2><a name="<%= object.name %>"><%= object.label %></a></h2>
             <p style="font-size:1.25em"><strong>API Name : </strong><%= object.name %></p>
             <p><span style="font-size:1.25em"><strong>Description : </strong><%= object.sfObject.description %></span></p>
-            <p style="padding-top:1em; font-size:1.25em"><strong>Fields</strong></p>
+            <% if (typeof object.recordTypes == 'object' && object.recordTypes && object.recordTypes.length>1) { %>
+                <p style="padding-top:1em; font-size:1.25em">  
+                    <strong>Record Types</strong>
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Label</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Active</th>
+                    </tr>
+            
+                    <% object.recordTypes.forEach(function(recordType) { %>
+                        <tr>
+                            <td><%= recordType.label %></td>
+                            <td><%= recordType.fullName %></td>
+                            <td><%= recordType.description %></td>
+                            <td><%= recordType.active %></td>
+                        </tr>
+                    <% }); %>
+                </table>
+            <% }; %>            <p style="padding-top:1em; font-size:1.25em"><strong>Fields</strong></p>
             <table>
                 <tr>
                     <th style="width:17%">Name</th>
@@ -94,7 +118,7 @@
                         <td><%= field.fullName %></td>
                         <td><%= field.label %></td>
                         <td><%= field.fullType %></td>
-                        <td><%= field.description %></td>
+                        <td><%- field.description %></td>
                         <td><%- field.additionalInfo %></td>
                     </tr>
                 <% }); %>
@@ -114,18 +138,18 @@
                     </tr>
             
                     <% object.validationRules.forEach(function(validationRule) { %>
-                        <tr style="<%= validationRule.style %>">
+                        <tr>
                             <td><%= validationRule.fullName %></td>
                             <td><%= validationRule.description %></td>
                             <td><%= validationRule.active %></td>
-                            <td><%= validationRule.errorConditionFormula %></td>
+                            <td><%- validationRule.errorConditionFormula %></td>
                         </tr>
                     <% }); %>
                 </table>
             <% }; %>
         <% }); %>
         <div class="footer" style="float:right;">Generated <%=footer.generatedDate%></div>
-        <div class="footer" style="float:left;">BrightGen Org Documentor v<%=footer.version%></div>
+        <div class="footer" style="float:left;">Bob Buzzard's Org Documentor v<%=footer.version%></div>
     </body>
 
 </html>

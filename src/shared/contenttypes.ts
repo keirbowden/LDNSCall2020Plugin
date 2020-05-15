@@ -28,6 +28,7 @@ interface ObjectContent {
     sfObject: object;
     fields: Array<ObjectFieldContent>;
     validationRules: Array<object>;
+    recordTypes: Array<Object>;
 }
 
 interface ObjectFieldContent {

@@ -16,7 +16,6 @@ class ObjectProcessor {
     indexFile : string;
     generator : HTMLGenerator;
     groupFile : string;
-    standardValueSetByField : object;
     content: ObjectsContent; 
 
     constructor(config, sourceDir, outputDir, generator) {
@@ -138,12 +137,33 @@ class ObjectProcessor {
                                 label: label,
                                 sfObject: md.CustomObject,
                                 fields: [],
-                                validationRules: []};
+                                validationRules: [],
+                                recordTypes: []};
                 contentGroup.objects.push(contentObj);
                                 
                 this.processFields(mem.member, contentObj);
+                this.processValidationRules(mem.member, contentObj);
+                this.processRecordTypes(mem.member, contentObj);
                 this.content.counter++;
             }
+        }
+    }
+
+    processValidationRules(member, contentObj) {
+        let valRulesDir=join(member.subdir, 'validationRules');
+        let valRules=getDirectoryEntries(valRulesDir);
+        for (let idx=0, len=valRules.length; idx<len; idx++) {
+            let valRuleMd=parseXMLToJS(join(valRulesDir, valRules[idx]));
+            contentObj.validationRules.push(valRuleMd.ValidationRule);
+        }
+    }
+
+    processRecordTypes(member, contentObj) {
+        let recTypesDir=join(member.subdir, 'recordTypes');
+        let recTypes=getDirectoryEntries(recTypesDir);
+        for (let idx=0, len=recTypes.length; idx<len; idx++) {
+            let recTypeMd=parseXMLToJS(join(recTypesDir, recTypes[idx]));
+            contentObj.recordTypes.push(recTypeMd.RecordType);
         }
     }
 
