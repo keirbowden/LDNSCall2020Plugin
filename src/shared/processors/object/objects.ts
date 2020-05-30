@@ -17,10 +17,12 @@ class ObjectProcessor {
     generator : HTMLGenerator;
     groupFile : string;
     content: ObjectsContent; 
+    missingDescriptions: boolean;
 
     constructor(config, sourceDir, outputDir, generator) {
     
         this.config=config;
+        this.missingDescriptions=false;
         this.outputDir=join(outputDir, 'objects');
         createDirectory(this.outputDir);
 
@@ -35,7 +37,9 @@ class ObjectProcessor {
     
 
         this.content={groups: [],
-                     counter: 0};
+                     missingDescriptions: [],
+                     counter: 0,
+                     description: this.mdSetup.description};
     }
 
     process() {
@@ -59,7 +63,11 @@ class ObjectProcessor {
 
         let objectLink: ContentLink = {
             title: 'Objects',
-            href: 'objects/objects.html'
+            href: 'objects/objects.html',
+            image: this.mdSetup.image,
+            description: this.mdSetup.description, 
+            warning: this.missingDescriptions,
+            error: false
         };
 
         return objectLink;
@@ -130,7 +138,11 @@ class ObjectProcessor {
 
                 let label:string=md.CustomObject.label||mem.member.name;
                 contentGroup.menuItems.push({href: mem.member.name, 
-                                             title: label});
+                                             description: '',
+                                             title: label,
+                                             warning: false,
+                                             error: false
+                                            });
 
                 let contentObj:ObjectContent={name: mem.member.name, 
                                 label: label,
@@ -172,7 +184,13 @@ class ObjectProcessor {
         for (let idx=0, len=fields.length; idx<len; idx++) {
             let fldMd=parseXMLToJS(join(fieldsDir, fields[idx]));
             enrichField(member.name, fldMd.CustomField, this.parentDir);
-            contentObj.fields.push(this.outputField(fldMd.CustomField));
+            let field=this.outputField(fldMd.CustomField);
+            if (field.background=='orange') {
+                this.missingDescriptions=true;
+                this.content.missingDescriptions.push(member.name + '.' + field.fullName);
+            }
+
+            contentObj.fields.push(field);
         }
     }
 

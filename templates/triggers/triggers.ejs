@@ -7,18 +7,18 @@
 
     <body>
         <div class="doc-header">
-            <nav aria-label="breadcrumb" class="container doc-header">
+            <nav aria-label="breadcrumb" class="container">
                 <ol class="breadcrumb doc-header">
                     <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Objects</li>
+                    <li class="breadcrumb-item active" aria-current="page">Triggers</li>
                 </ol>
-            </nav>    
+            </nav>
             <div class="jumbotron jumbotron-fluid doc-header">
                 <div class="container">
-                    <h1 class="display-4">Objects</h1>
+                    <h1 class="display-4">Triggers</h1>
                     <p class="lead"><%= content.description %></p>
                 </div>
-            </div>
+            </div>                    
         </div>
         <div class="container">
             <table class="table">
@@ -33,17 +33,28 @@
                     </tr>
                 <% }); %>
             </table>
-            <h6 class="text-muted pt-4 text-right"><%= content.counter %> objects processed</h6>
-            <% if (content.missingDescriptions.length>0) { %>
+            
+            <h6 class="text-muted pt-4 text-right"><%= content.counter %> triggers processed</h6>
+
+            <% if (content.duplicates.length>0) { %>
                 <div class="mt-5"></div>
-                <h4 class="bg-warning text-center mb-4">Missing Descriptions</h4>
-                <p>The following fields are missing descriptions:</p>
-                <ol>
-                    <% content.missingDescriptions.forEach(function(missingDescription){ %>
-                        <li><%= missingDescription %></li>
-                    <% }); %>                
-                </ol>
-            <% } %>        
+                <h4 class="bg-danger text-white text-center mb-4">Duplicates Detected</h4>
+                <p>The following object + action combinations have more than one trigger defined - the order that these triggers will be invoked in cannot be guaranteed.</p>
+                <table class="table">
+                    <tr>
+                        <th>Object</th>
+                        <th>Action</th>
+                        <th>Triggers</th>
+                    </tr>
+                    <% content.duplicates.forEach(function(duplicate){ %>
+                        <tr>
+                            <td><%= duplicate.objectName %></td>
+                            <td><%= duplicate.action %></td>
+                            <td><%= duplicate.triggers %></td>
+                        </tr>
+                    <% }); %>
+                </table>
+            <% } %>
         </div>
         <%- include ('../common/footer') %>
     </body>

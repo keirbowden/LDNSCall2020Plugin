@@ -5,11 +5,17 @@ interface IndexContent {
 interface ContentLink {
     title: string;
     href: string;
+    image?: string;
+    description: string;
+    warning: boolean;
+    error: boolean;
 }
 
 interface ObjectsContent {
+    description: string;
     counter: number;
     groups: Array<ObjectGroupContent>;
+    missingDescriptions: Array<String>;
     footer?: object;
 }
 
@@ -41,4 +47,36 @@ interface ObjectFieldContent {
     additionalInfo: string;
 }
 
-export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent}
+interface TriggersContent {
+    counter: number;
+    groups: Array<TriggerGroupContent>;
+    duplicates?: Array<TriggerDuplicate>;
+    footer?: object;
+}
+
+interface TriggerGroupContent {
+    name: string;
+    title: string,
+    description: string,
+    link: string,
+    triggers : Array<TriggerContent>,
+    menuItems : Array<ContentLink>
+}
+
+interface TriggerContent {
+    name: string;
+    label: string;
+    trigger: string;
+    triggerMeta: object;
+    actions?: string;
+    objectName?: string;
+
+}
+
+interface TriggerDuplicate {
+    objectName : string;
+    action : string;
+    triggers: string;
+}
+
+export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, TriggersContent, TriggerGroupContent, TriggerContent, TriggerDuplicate}

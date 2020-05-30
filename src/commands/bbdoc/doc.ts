@@ -4,7 +4,7 @@ import { AnyJson } from '@salesforce/ts-types';
 import { fileExists } from '../../shared/files';
 import { defaultConfig } from '../../shared/defaultConfig';
 import { Documentor } from '../../shared/documentor';
-import { mkdirSync } from 'fs';
+import { mkdirSync, readdirSync, copyFileSync } from 'fs';
 import { join } from 'path';
 import {fs} from '@salesforce/core';
 
@@ -48,9 +48,15 @@ Report generated at report/index.html
   public async run(): Promise<AnyJson> {
     // create the report directory, if it doesn't already exist
     let reportDir=this.flags['report-dir'];
+    let imageDir=join(reportDir, 'images');
     if (!fileExists(reportDir)) {
       this.ux.log('Creating report directory ' + reportDir);
       mkdirSync(reportDir);
+    }
+
+    if (!fileExists(imageDir)) {
+      this.ux.log('Creating imageDir directory ' + reportDir);
+      mkdirSync(imageDir);
     }
 
     let sourceDir=this.flags['source-dir'];
@@ -69,6 +75,12 @@ Report generated at report/index.html
     // find the html templates
     const pluginRoot=await fs.traverseForFile(__dirname, 'package.json');
     const ejsTemplateDirName=join(pluginRoot, 'templates');
+
+    const templateImageDir=join(ejsTemplateDirName, 'images');
+    let imageFiles=readdirSync(templateImageDir);
+    imageFiles.forEach(function (file) {
+      copyFileSync(join(templateImageDir, file), join(imageDir, file));
+    });
 
      // get the version
      const packageJSON=await fs.readFile(join(pluginRoot, 'package.json'), 'utf-8');

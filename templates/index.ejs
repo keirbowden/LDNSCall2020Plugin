@@ -1,78 +1,49 @@
 <html>
-    <head>
-        <style>
-            html,
-            body {
-                font-size: 12px;
-                font-family: sans-serif;
-                margin: 1em 4em;
-            }
 
-            table {
-                width: 100%;
-                font-size: 12px;
-                border-collapse: collapse;
-            }
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <%- include ('common/styles') %> 
+</head>
 
-            th {
-                font-size: 1.2em;
-                font-weight: bold;
-            }
-
-            td,
-            th {
-                text-align: left;
-                border: 1px solid black;
-                padding: 5px;
-            }
-
-            h1 {
-                text-align: center;
-                color: #fe7c40;
-            }
-
-            h2 {
-                margin-top: 2em;
-                color: #fe7c40;
-            }
-
-            p {
-                text-align: left;
-            }
-
-            figcaption {
-                text-align: center;
-            }
-
-            .centeredimage {
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-                width: 50%;
-            }
-
-            li {
-                padding-bottom: 0.4em;
-            }
-
-            .footer {
-                font-size: 10px;
-                padding: 20px 20px 30px 20px;
-                text-align: center;
-                font-weight: bold;
-            }
-        </style>
-    </head>
-
-    <body>
-        <h1>Org Report</h1>
-        <% content.links.forEach(function(link){ %>
-            <div>
-                <a href="<%= link.href %>"><%= link.title%></a>
+<body>
+    <div class="jumbotron jumbotron-fluid doc-header">
+        <div class="container">
+            <h1 class="display-4">Org Report</h1>
+            <p class="lead">Direct from your metadata.</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <% content.links.forEach(function(link){ %>
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="<%= link.image %>" class="card-img-top" alt="data model template">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5 class="card-title"><%= link.title%></h5>
+                                </div>
+                                <div class="col-6">
+                                    <% if (link.warning) { %>
+                                    <span class="badge badge-warning">Warnings</span>
+                                    <% } %>
+                                    <% if (link.error) { %>
+                                        <span class="badge badge-danger">Errors</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= link.description %></p>
+                        <a href="<%= link.href %>" class="btn btn-primary">View Detail</a>
+                    </div>
+                </div>
             </div>
-        <% }); %>
-        <div class="footer" style="float:right;">Generated <%=footer.generatedDate%></div>
-        <div class="footer" style="float:left;">Bob Buzzard's Org Documentor v<%=footer.version%></div>
-    </body>
+            <% }); %>
+        </div>
+    </div>
+    <%- include ('common/footer') %> 
+</body>
 
 </html>

@@ -68,7 +68,7 @@ let addAdditionalFieldInfo = (field, type) => {
                         if (!(field.valueSet.valueSetDefinition.value instanceof Array)) {
                             field.valueSet.valueSetDefinition.value=[field.valueSet.valueSetDefinition.value];
                         }
-                        field.valueSet.valueSetDefinition.value.forEach(item => {console.log('Item = ' + JSON.stringify(item, null, 4)); result+='&nbsp;&nbsp;' + item.fullName + '<br/>'});
+                        field.valueSet.valueSetDefinition.value.forEach(item => {result+='&nbsp;&nbsp;' + item.fullName + '<br/>'});
                     }
                 }
                 break;

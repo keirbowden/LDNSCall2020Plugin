@@ -1,120 +1,77 @@
 <html>
-    <head>
-        <style>
-            html,
-            body {
-                font-size: 12px;
-                font-family: sans-serif;
-                margin: 1em 4em;
-            }
 
-            table {
-                width: 100%;
-                font-size: 12px;
-                border-collapse: collapse;
-            }
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <%- include ('../common/styles') %>
+</head>
 
-            th {
-                font-size: 1.2em;
-                font-weight: bold;
-            }
+<body>
+    <div class="doc-header">
+        <nav aria-label="breadcrumb" class="container doc-header">
+            <ol class="breadcrumb doc-header">
+                <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="objects.html">Objects</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><%= content.title %></li>
+            </ol>
+        </nav>    
+        <div class="jumbotron jumbotron-fluid doc-header">
+            <div class="container">
+                <h1 class="display-4"><%= content.title %></h1>
+                <p class="lead"><%= content.description %></p>
+            </div>
+        </div>
+    </div>
 
-            td,
-            th {
-                text-align: left;
-                border: 1px solid black;
-                padding: 5px;
-            }
-
-            h1 {
-                text-align: center;
-                color: #fe7c40;
-            }
-
-            h2 {
-                margin-top: 2em;
-                color: #fe7c40;
-            }
-
-            p {
-                text-align: left;
-            }
-
-            figcaption {
-                text-align: center;
-            }
-
-            .centeredimage {
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-                width: 50%;
-            }
-
-            li {
-                padding-bottom: 0.4em;
-            }
-
-            .footer {
-                font-size: 10px;
-                padding: 20px 20px 30px 20px;
-                text-align: center;
-                font-weight: bold;
-            }
-        </style>
-    </head>
-
-    <body>
-        <a href="objects.html">Objects</a>
-        <h1><%= content.title %></h1>
-        <p style="font-size: 1.2em"><%= content.description %></p> 
-
+    <div class="container">
         <h2>Menu</h2>
-        <ul>
+        <nav class="nav flex-column">
             <% content.menuItems.forEach(function(menuItem){ %>
-                <li><a style="font-size: 1.2em;" href="#<%= menuItem.href %>"><%= menuItem.title %> </a></li>
+                <a class="nav-link pb-0" href="#<%= menuItem.href %>"><%= menuItem.title %></a>
             <% }); %>
-        </ul>
-        
+        </nav>        
+        <div class="mt-5"></div>
         <% content.objects.forEach(function(object){ %>
-            <div style="padding-top:1em;"/>
-            <hr/>
-            <h2><a name="<%= object.name %>"><%= object.label %></a></h2>
-            <p style="font-size:1.25em"><strong>API Name : </strong><%= object.name %></p>
-            <p><span style="font-size:1.25em"><strong>Description : </strong><%= object.sfObject.description %></span></p>
-            <% if (typeof object.recordTypes == 'object' && object.recordTypes && object.recordTypes.length>0) { %>
-                <p style="padding-top:1em; font-size:1.25em">  
-                    <strong>Record Types</strong>
-                </p>
+        <div class="card mb-5">
+            <h3 class="card-header bg-info text-white"><a name="<%= object.name %>"><%= object.label %></a></h5>
+            <div class="card-body">        
+                <h6 class="card-subtitle mb-2 text-muted"><strong>API Name : </strong><%= object.name %></h6>
+                <p><%= object.sfObject.description %></p>
+                <% if (typeof object.recordTypes == 'object' && object.recordTypes && object.recordTypes.length>0) { %>
+                <h5 class="pt-3">Record Types</h5>
 
-                <table>
-                    <tr>
-                        <th>Label</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Active</th>
-                    </tr>
-            
-                    <% object.recordTypes.forEach(function(recordType) { %>
+                <table class="table table-bordered">
+                    <thead class="thead-light">
                         <tr>
-                            <td><%= recordType.label %></td>
-                            <td><%= recordType.fullName %></td>
-                            <td><%- recordType.description %></td>
-                            <td><%= recordType.active %></td>
+                            <th>Label</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Active</th>
                         </tr>
+                    </thead>
+
+                    <% object.recordTypes.forEach(function(recordType) { %>
+                    <tr>
+                        <td><%= recordType.label %></td>
+                        <td><%= recordType.fullName %></td>
+                        <td><%- recordType.description %></td>
+                        <td><%= recordType.active %></td>
+                    </tr>
                     <% }); %>
                 </table>
-            <% }; %>            
-            <p style="padding-top:1em; font-size:1.25em"><strong>Fields</strong></p>
-            <table>
-                <tr>
-                    <th style="width:17%">Name</th>
-                    <th style="width:15%">Label</th>
-                    <th style="width:10%">Type</th>
-                    <th style="width:40%">Description</th>
-                    <th style="width:18%">Info</th>
-                </tr>
-                <% object.fields.forEach(function(field){ %>
+                <% }; %>
+                <h5 class="pt-3">Fields</h5>
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:17%">Name</th>
+                            <th style="width:15%">Label</th>
+                            <th style="width:10%">Type</th>
+                            <th style="width:40%">Description</th>
+                            <th style="width:18%">Info</th>
+                        </tr>
+                    </thead>
+                    <% object.fields.forEach(function(field){ %>
                     <tr style="background-color: <%= field.background %>">
                         <td><%= field.fullName %></td>
                         <td><%= field.label %></td>
@@ -122,35 +79,37 @@
                         <td><%- field.description %></td>
                         <td><%- field.additionalInfo %></td>
                     </tr>
-                <% }); %>
-            </table>
-            
-            <% if (typeof object.validationRules == 'object' && object.validationRules && object.validationRules.length>0) { %>
-                <p style="padding-top:1em; font-size:1.25em">  
-                    <strong>Validation Rules</strong>
-                </p>
-
-                <table>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                         <th>Active</th>
-                         <th>Criteria</th>
-                    </tr>
-            
-                    <% object.validationRules.forEach(function(validationRule) { %>
-                        <tr>
-                            <td><%= validationRule.fullName %></td>
-                            <td><%- validationRule.description %></td>
-                            <td><%= validationRule.active %></td>
-                            <td><%- validationRule.errorConditionFormula %></td>
-                        </tr>
                     <% }); %>
                 </table>
-            <% }; %>
-        <% }); %>
-        <div class="footer" style="float:right;">Generated <%=footer.generatedDate%></div>
-        <div class="footer" style="float:left;">Bob Buzzard's Org Documentor v<%=footer.version%></div>
-    </body>
+
+                <% if (typeof object.validationRules == 'object' && object.validationRules && object.validationRules.length>0) { %>
+                <h5 class="pt-3">Validation Rules</h5>
+
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Active</th>
+                            <th>Criteria</th>
+                        </tr>
+                    </thead>
+
+                    <% object.validationRules.forEach(function(validationRule) { %>
+                    <tr>
+                        <td><%= validationRule.fullName %></td>
+                        <td><%- validationRule.description %></td>
+                        <td><%= validationRule.active %></td>
+                        <td><%- validationRule.errorConditionFormula %></td>
+                    </tr>
+                    <% }); %>
+                </table>
+                <% }; %>
+            </div>
+        </div>
+    <% }); %>
+    </div>
+    <%- include ('../common/footer') %>
+</body>
 
 </html>

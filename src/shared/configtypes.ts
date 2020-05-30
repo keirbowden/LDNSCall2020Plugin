@@ -35,6 +35,7 @@ interface Metadata {
     groups: Map<string, MetadataGroup>;
     subdirectory: string;
     description: string;
+    image: string;
     members: Array<MetadataMember>;
 };
 

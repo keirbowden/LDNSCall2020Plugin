@@ -2,6 +2,7 @@ import { join } from 'path';
 import { writeFileSync } from 'fs';
 import {HTMLGenerator} from './htmlGenerator';
 import {ObjectProcessor} from './processors/object/objects';
+import {TriggerProcessor} from './processors/trigger/triggers';
 import { DocumentorConfig } from './configtypes';
 import { IndexContent } from './contenttypes';
 
@@ -25,15 +26,18 @@ class Documentor {
     }
     
     document() {
-        for (let mdType of ['objects']) {
+        for (let mdType of ['objects', 'triggers']) {
             if (this.config[mdType]!==undefined) {
-                this.indexContent.links.push(this.process(mdType));
+                this.process(mdType);
             }
         }        
         this.htmlGenerator.generateHTML('index.ejs', this.indexContent)
         .then(html => {
             writeFileSync(this.indexFile, html);
 
+        })
+        .catch(err => {
+            console.log('Error ' + err);
         });
     }
 
@@ -44,9 +48,16 @@ class Documentor {
                 let objects=new ObjectProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
                 link=objects.process();
                 break;
-            }
 
-        return link;
+            case 'triggers':
+                let triggers=new TriggerProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
+                link=triggers.process();
+                break;
+        }
+
+        if (link) {
+            this.indexContent.links.push(link);
+        }
     }
 }
 
