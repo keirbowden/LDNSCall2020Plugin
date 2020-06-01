@@ -134,7 +134,16 @@ class ObjectProcessor {
             if (!mem.member.processed) {
                 mem.member.processed=true;
                 // load the object definition file
-                let md=parseXMLToJS(join(mem.member.subdir, mem.member.name + '.object-meta.xml'));
+                let md;
+                try {
+                    md=parseXMLToJS(join(mem.member.subdir, mem.member.name + '.object-meta.xml'));
+                }
+                catch (e) {
+                    md={CustomObject: 
+                        {label: mem.member.name,
+                         description: 'Object metadata not in version control'
+                        }}
+                }
 
                 let label:string=md.CustomObject.label||mem.member.name;
                 contentGroup.menuItems.push({href: mem.member.name, 
