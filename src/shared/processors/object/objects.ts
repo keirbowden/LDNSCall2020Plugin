@@ -1,10 +1,11 @@
 import { join } from 'path';
-import { lstatSync, writeFileSync } from 'fs';
+import { createWriteStream, lstatSync, writeFileSync } from 'fs';
 import { HTMLGenerator } from '../../htmlGenerator';
 import { createDirectory, parseXMLToJS, getDirectoryEntries } from '../../files';
-import { ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent } from '../../contenttypes';
+import { ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, PumlField, PumlEntity } from '../../contenttypes';
 import { Metadata, MetadataGroup, DocumentorConfig } from '../../configtypes';
 import { enrichField, addAdditionalFieldInfo } from './objectutils';
+var plantuml = require('node-plantuml');
 
 class ObjectProcessor {
     groups : Map<string, MetadataGroup>;
@@ -16,11 +17,11 @@ class ObjectProcessor {
     indexFile : string;
     generator : HTMLGenerator;
     groupFile : string;
-    content: ObjectsContent; 
+    content: ObjectsContent;
     missingDescriptions: boolean;
 
     constructor(config, sourceDir, outputDir, generator) {
-    
+
         this.config=config;
         this.missingDescriptions=false;
         this.outputDir=join(outputDir, 'objects');
@@ -34,7 +35,7 @@ class ObjectProcessor {
         this.sourceDir=sourceDir+this.mdSetup.subdirectory;
 
         this.indexFile=join(this.outputDir, '/objects.html');
-    
+
 
         this.content={groups: [],
                      missingDescriptions: [],
@@ -50,7 +51,7 @@ class ObjectProcessor {
 
         this.generator.generateHTML(join('objects', 'objects.ejs'), this.content)
         .then(html => {
-            writeFileSync(this.indexFile, html);    
+            writeFileSync(this.indexFile, html);
         });
 
         this.content.groups.forEach(group => {
@@ -59,13 +60,15 @@ class ObjectProcessor {
                 this.groupFile=join(this.outputDir, group.name+'.html');
                 writeFileSync(this.groupFile, html);
             });
+
+            this.createERD(group);
         });
 
         let objectLink: ContentLink = {
             title: 'Objects',
             href: 'objects/objects.html',
             image: this.mdSetup.image,
-            description: this.mdSetup.description, 
+            description: this.mdSetup.description,
             warning: this.missingDescriptions,
             error: false
         };
@@ -98,14 +101,14 @@ class ObjectProcessor {
                     for (let member of this.mdSetup.members) {
                         if ( ((group.objects) && (group.objects.includes(member.name))) ||
                              ((typeof group.prefix !=='undefined') && member.name.startsWith(group.prefix)) ||
-                             ((typeof group.additional !== 'undefined') && (group.additional.includes(member))) 
-                            ) 
+                             ((typeof group.additional !== 'undefined') && (group.additional.includes(member)))
+                            )
                         {
                             let groupMember={member: member,
                                              group: group};
                             group.members.push(groupMember);
                         }
-                    }    
+                    }
                 }
             }
         }
@@ -122,10 +125,10 @@ class ObjectProcessor {
 
     processGroup(group : MetadataGroup) {
         group.started=true;
-        let contentGroup : ObjectGroupContent={title: group.title, 
-                          name: group.name, 
-                          description: group.description, 
-                          link: group.name + '.html', 
+        let contentGroup : ObjectGroupContent={title: group.title,
+                          name: group.name,
+                          description: group.description,
+                          link: group.name + '.html',
                           objects : [],
                           menuItems : []};
 
@@ -146,21 +149,21 @@ class ObjectProcessor {
                 }
 
                 let label:string=md.CustomObject.label||mem.member.name;
-                contentGroup.menuItems.push({href: mem.member.name, 
+                contentGroup.menuItems.push({href: mem.member.name,
                                              description: '',
                                              title: label,
                                              warning: false,
                                              error: false
                                             });
 
-                let contentObj:ObjectContent={name: mem.member.name, 
+                let contentObj:ObjectContent={name: mem.member.name,
                                 label: label,
                                 sfObject: md.CustomObject,
                                 fields: [],
                                 validationRules: [],
                                 recordTypes: []};
                 contentGroup.objects.push(contentObj);
-                                
+
                 this.processFields(mem.member, contentObj);
                 this.processValidationRules(mem.member, contentObj);
                 this.processRecordTypes(mem.member, contentObj);
@@ -217,11 +220,11 @@ class ObjectProcessor {
         if ( (!field.label) && (-1==field.fullName.indexOf('__c')) ) {
             field.label='N/A (standard field)';
         }
-    
+
         if ( (!field.description) && (-1==field.fullName.indexOf('__c')) ) {
             field.description='N/A (standard field)';
         }
-        
+
         field.background='';  // change this if we need to callout anything
         if (typeof field.description === 'undefined') {
             field.background='orange';
@@ -241,7 +244,7 @@ class ObjectProcessor {
                 field.background='#f28a8a';
             }
         }
-        
+
         var type=fldMd.type;
         if (type) {
             type=type.toString();
@@ -255,11 +258,73 @@ class ObjectProcessor {
         else {
             type="N/A (standard field)";
         }
-    
+
         field.additionalInfo=addAdditionalFieldInfo(fldMd, type);
         field.fullType=type;
 
         return field;
+    }
+
+    createERD(group : ObjectGroupContent) {
+        // TODO
+        // - conditionally based on config?
+        // - required field identifier
+
+        let entities:Array<PumlEntity> = [];
+        let relationships = {};
+        let groupMemberNames:Array<string> = [];
+        let relationTargetNames:Array<string> = [];
+
+        group.objects.forEach(object => {
+            groupMemberNames.push(object.name);
+            if (! object.name.includes("__mdt")) {
+                let entity:PumlEntity = {
+                    name: object.name,
+                    fields: []
+                };
+                relationships[object.name] = {};
+                object.fields.forEach(field => {
+                    let pumlField:PumlField = {
+                        name: field.fullName,
+                        type: field.fullType
+                    };
+                    switch (field.fullType) {
+                        case "Lookup":
+                        case "MasterDetail" :
+                            const relTarget = field.additionalInfo.split(': ')[1];
+                            relationTargetNames.push(relTarget);
+                            pumlField.typeAdditionalInfo = relTarget;
+                            // We can use the below assignment to further enrich
+                            relationships[object.name][relTarget] = true;
+                            break;
+                        case 'Text':
+                        case "LongTextArea" :
+                            pumlField.typeAdditionalInfo = field.additionalInfo.split(': ')[1];
+                            break;
+                    }
+                    entity.fields.push(pumlField);
+                });
+                entities.push(entity);
+            }
+        });
+
+        // Create entities for non-group objects that are targets for relationships
+        const nonGroupMemberNames:Array<string> = relationTargetNames.filter(target => {
+            return !groupMemberNames.includes(target);
+        });
+
+        const pumlObj = {
+            entities: entities,
+            nonGroupEntities: nonGroupMemberNames,
+            relationships: relationships
+        }
+
+        this.generator.generateHTML(join('objects', 'objects-puml.ejs'), pumlObj)
+        .then(puml => {
+            writeFileSync(join(this.outputDir, group.name+'-erd.puml'), puml);
+            const gen = plantuml.generate(join(this.outputDir, group.name+'-erd.puml'), {format: 'svg'});
+            gen.out.pipe(createWriteStream(join(this.outputDir, group.name + '-erd.svg')));
+        });
     }
 
 }

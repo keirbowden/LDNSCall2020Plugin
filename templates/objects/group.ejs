@@ -14,7 +14,7 @@
                 <li class="breadcrumb-item"><a href="objects.html">Objects</a></li>
                 <li class="breadcrumb-item active" aria-current="page"><%= content.title %></li>
             </ol>
-        </nav>    
+        </nav>
         <div class="jumbotron jumbotron-fluid doc-header">
             <div class="container">
                 <h1 class="display-4"><%= content.title %></h1>
@@ -29,12 +29,13 @@
             <% content.menuItems.forEach(function(menuItem){ %>
                 <a class="nav-link pb-0" href="#<%= menuItem.href %>"><%= menuItem.title %></a>
             <% }); %>
-        </nav>        
+            <a class="nav-link pb-0" href="#erd">ERD</a>
+        </nav>
         <div class="mt-5"></div>
         <% content.objects.forEach(function(object){ %>
         <div class="card mb-5">
             <h3 class="card-header bg-info text-white"><a name="<%= object.name %>"><%= object.label %></a></h5>
-            <div class="card-body">        
+            <div class="card-body">
                 <h6 class="card-subtitle mb-2 text-muted"><strong>API Name : </strong><%= object.name %></h6>
                 <p><%= object.sfObject.description %></p>
                 <% if (typeof object.recordTypes == 'object' && object.recordTypes && object.recordTypes.length>0) { %>
@@ -108,6 +109,15 @@
             </div>
         </div>
     <% }); %>
+        <h3 class="card-header bg-info text-white"><a name="ERD">ERD</a></h3>
+        <div id="erd" class="text-center">
+            <a href="<%= content.name %>-erd.svg" target="_BLANK">
+                <object type="image/svg+xml" data="<%= content.name %>-erd.svg">
+                    <!-- Fall back -->
+                    <img src="<%= content.name %>-erd.svg" alt="ERD for <%= content.name %> object" />
+                </object>
+            </a>
+        </div>
     </div>
     <%- include ('../common/footer') %>
 </body>

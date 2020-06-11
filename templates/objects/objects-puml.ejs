@@ -1,0 +1,33 @@
+@startuml
+
+'Hide the spot
+hide circle
+
+'Hide the stereotype
+hide stereotype
+
+hide <<external-group>> members
+
+skinparam class {
+    BackgroundColor<<external-group>> LightBlue
+}
+
+'Entities
+<% content.entities.forEach(function(object){ %> entity <%= object.name %> {
+    --
+    <% object.fields.forEach(function(field){ %> <%= field.name %> : <%= field.type %> <% if (field.typeAdditionalInfo) { %> (<%= field.typeAdditionalInfo %>) <% }; %>
+    <% }); %>
+}
+<% }); %>
+'Non-group Entities
+<% content.nonGroupEntities.forEach(function(nonGroupObject){ %> entity <%= nonGroupObject %> <<external-group>> {
+}
+<% }); %>
+
+'Relationships
+<% for (let src in content.relationships) {
+    for (let target in content.relationships[src]) { %>
+        <%= src %>  }o..o| <%= target %>
+    <% }
+}; %>
+@enduml
