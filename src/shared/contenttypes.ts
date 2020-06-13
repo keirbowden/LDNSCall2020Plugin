@@ -47,6 +47,17 @@ interface ObjectFieldContent {
     additionalInfo: string;
 }
 
+interface PumlEntity {
+    name: string;
+    fields: Array<PumlField>
+}
+
+interface PumlField {
+    name: string,
+    type: string,
+    typeAdditionalInfo?: string
+}
+
 interface TriggersContent {
     counter: number;
     groups: Array<TriggerGroupContent>;
@@ -79,4 +90,4 @@ interface TriggerDuplicate {
     triggers: string;
 }
 
-export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, TriggersContent, TriggerGroupContent, TriggerContent, TriggerDuplicate}
+export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, PumlEntity, PumlField, TriggersContent, TriggerGroupContent, TriggerContent, TriggerDuplicate}
