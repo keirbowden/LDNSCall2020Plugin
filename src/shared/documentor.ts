@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { writeFileSync } from 'fs';
 import {HTMLGenerator} from './htmlGenerator';
+import {AuraEnabledProcessor} from './processors/auraenabled/auraenabled';
 import {ObjectProcessor} from './processors/object/objects';
 import {TriggerProcessor} from './processors/trigger/triggers';
 import { DocumentorConfig } from './configtypes';
@@ -26,11 +27,11 @@ class Documentor {
     }
     
     document() {
-        for (let mdType of ['objects', 'triggers']) {
+        for (let mdType of ['objects', 'triggers', 'auraenabled']) {
             if (this.config[mdType]!==undefined) {
                 this.process(mdType);
             }
-        }        
+        }
         this.htmlGenerator.generateHTML('index.ejs', this.indexContent)
         .then(html => {
             writeFileSync(this.indexFile, html);
@@ -45,15 +46,20 @@ class Documentor {
         let link;
         switch (mdType) {
             case 'objects':
-                let objects=new ObjectProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
-                link=objects.process();
+                const objects = new ObjectProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
+                link = objects.process();
                 break;
 
             case 'triggers':
-                let triggers=new TriggerProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
-                link=triggers.process();
+                const triggers = new TriggerProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
+                link = triggers.process();
                 break;
-        }
+
+            case 'auraenabled':
+                const auraenabled = new AuraEnabledProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
+                link = auraenabled.process();
+                break;
+            }
 
         if (link) {
             this.indexContent.links.push(link);

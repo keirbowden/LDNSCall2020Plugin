@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <%- include ('../common/styles') %>
+    </head>
+
+    <body>
+        <div class="doc-header">
+            <nav aria-label="breadcrumb" class="container">
+                <ol class="breadcrumb doc-header">
+                    <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Aura Enabled</li>
+                </ol>
+            </nav>
+            <div class="jumbotron jumbotron-fluid doc-header">
+                <div class="container">
+                    <h1 class="display-4">Aura Enabled</h1>
+                    <p class="lead"><%= content.description %></p>
+                </div>
+            </div>                    
+        </div>
+        <div class="container">
+            <table class="table">
+                <tr>
+                    <th>Group</th>
+                    <th>Detail</th>
+                </tr>
+                <% content.groups.forEach(function(group){ %>
+                    <tr>
+                        <td><%= group.title %></td>
+                        <td><a href="<%= group.link %>">Click to View</a></td>
+                    </tr>
+                <% }); %>
+            </table>
+            
+            <h6 class="text-muted pt-4 text-right"><%= content.counter %> components processed</h6>
+            <% if (content.noAccess.length>0) { %>
+                <div class="mt-5"></div>
+                <h4 class="bg-danger text-center mb-4">No Access</h4>
+                <p>The following controller classes have aura enabled methods used by Aura or Lightning Web Components, but are not accessible from any profile or permissionset. In Winter 21 these components will error.</p>
+                <ol>
+                    <% content.noAccess.forEach(function(controller){ %>
+                        <li><%= controller %></li>
+                    <% }); %>                
+                </ol>
+            <% } %>        
+
+        </div>
+        <%- include ('../common/footer') %>
+    </body>
+
+</html>

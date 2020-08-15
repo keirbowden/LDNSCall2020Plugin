@@ -79,4 +79,32 @@ interface TriggerDuplicate {
     triggers: string;
 }
 
-export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, TriggersContent, TriggerGroupContent, TriggerContent, TriggerDuplicate}
+
+interface AuraEnabledHeaderContent {
+    counter: number;
+    groups: Array<AuraEnabledGroupContent>;
+    noAccess: string[];
+    footer?: object;
+}
+
+interface AuraEnabledGroupContent {
+    name: string;
+    title: string,
+    description: string,
+    link: string,
+    auraenabled : Array<AuraEnabledContent>,
+    menuItems : Array<ContentLink>
+}
+
+interface AuraEnabledContent {
+    name: string;
+    label: string;
+    controller: string;
+    componentType: string;
+    background: string;
+    profiles: string[];
+    permsets: string[];
+}
+
+export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, TriggersContent, TriggerGroupContent, TriggerContent, TriggerDuplicate,
+    AuraEnabledHeaderContent, AuraEnabledGroupContent, AuraEnabledContent}

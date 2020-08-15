@@ -47,8 +47,8 @@ Report generated at report/index.html
 
   public async run(): Promise<AnyJson> {
     // create the report directory, if it doesn't already exist
-    let reportDir=this.flags['report-dir'];
-    let imageDir=join(reportDir, 'images');
+    const reportDir = this.flags['report-dir'];
+    const imageDir = join(reportDir, 'images');
     if (!fileExists(reportDir)) {
       this.ux.log('Creating report directory ' + reportDir);
       mkdirSync(reportDir);
@@ -59,34 +59,34 @@ Report generated at report/index.html
       mkdirSync(imageDir);
     }
 
-    let sourceDir=this.flags['source-dir'];
+    const sourceDir = this.flags['source-dir'];
 
     // load the config, using the default if nothing provided via flags
     let config;
 
     if (!this.flags.config) {
       this.ux.log('Using default configuration');
-      config=defaultConfig;
+      config = defaultConfig;
     }
     else {
-      config=await fs.readJson(this.flags.config);
+      config = await fs.readJson(this.flags.config);
     }
 
     // find the html templates
-    const pluginRoot=await fs.traverseForFile(__dirname, 'package.json');
-    const ejsTemplateDirName=join(pluginRoot, 'templates');
+    const pluginRoot = await fs.traverseForFile(__dirname, 'package.json');
+    const ejsTemplateDirName = join(pluginRoot, 'templates');
 
-    const templateImageDir=join(ejsTemplateDirName, 'images');
-    let imageFiles=readdirSync(templateImageDir);
-    imageFiles.forEach(function (file) {
+    const templateImageDir = join(ejsTemplateDirName, 'images');
+    const imageFiles = readdirSync(templateImageDir);
+    imageFiles.forEach(file => {
       copyFileSync(join(templateImageDir, file), join(imageDir, file));
     });
 
      // get the version
-     const packageJSON=await fs.readFile(join(pluginRoot, 'package.json'), 'utf-8');
-    const pkg=JSON.parse(packageJSON);
-    config.version=pkg.version;
-    let documentor=new Documentor(sourceDir, reportDir, config, ejsTemplateDirName);
+    const packageJSON = await fs.readFile(join(pluginRoot, 'package.json'), 'utf-8');
+    const pkg = JSON.parse(packageJSON);
+    config.version = pkg.version;
+    const documentor = new Documentor(sourceDir, reportDir, config, ejsTemplateDirName);
 
     this.ux.log('Documenting Org');
     documentor.document();

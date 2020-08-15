@@ -8,6 +8,7 @@ interface MetadataMember {
     processed: boolean;
     started?: boolean;
     subdir: string;
+    componentType?: string;
 }
 
 interface MetadataGroupMember {
