@@ -45,6 +45,7 @@ interface ObjectFieldContent {
     description: string;
     sfField: object;
     additionalInfo: string;
+    pageLayoutInfo?: ObjectPageLayoutData[];
 }
 
 interface TriggersContent {
@@ -106,5 +107,12 @@ interface AuraEnabledContent {
     permsets: string[];
 }
 
+interface ObjectPageLayoutData {
+    layoutName: string;
+    objectName: string;
+    fieldName: string;
+    behavior: string;
+}
+
 export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, TriggersContent, TriggerGroupContent, TriggerContent, TriggerDuplicate,
-    AuraEnabledHeaderContent, AuraEnabledGroupContent, AuraEnabledContent}
+    AuraEnabledHeaderContent, AuraEnabledGroupContent, AuraEnabledContent, ObjectPageLayoutData}
