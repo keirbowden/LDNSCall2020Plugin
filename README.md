@@ -14,7 +14,7 @@ INSTALLING
   $ sfdx plugins
     @salesforce/sfdx-diff 0.0.6
        ...
-    bbdoc 3.4.0
+    bbdoc 3.4.3
 
 USAGE
   $ sfdx bbdoc:doc -r <string> -s <string> [-c <string>] [--json] [--loglevel 
@@ -35,10 +35,10 @@ OPTIONS
                                                                                     this command invocation
 
 EXAMPLE
-  $ sfdx bbdoc:doc --config ./config/bbdoc-config.json --report-dir ./report --source-dir force-app/main/default
+  $ sfdx bbdoc:doc --config ./config/bbdoc-config.json --report-dir ./report --source-dir force-app/main/default/
   Documenting Org
   Documented Org
   Report generated at report/index.html
 ```
 
-_See code: [lib/commands/bbdoc/doc.js](https://github.com/keirbowden/LDNSCall2020Plugin/blob/v3.4.0/lib/commands/bbdoc/doc.js)_
+_See code: [src/commands/bbdoc/doc.ts](https://github.com/keirbowden/LDNSCall2020Plugin/blob/V3.4.0/src/commands/bbdoc/doc.ts)_
