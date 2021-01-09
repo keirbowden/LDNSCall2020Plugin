@@ -1,5 +1,7 @@
 interface IndexContent {
     links: Array<ContentLink>;
+    title: string;
+    subtitle: string;
 }
 
 interface ContentLink {

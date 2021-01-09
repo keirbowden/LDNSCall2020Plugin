@@ -23,7 +23,9 @@ class Documentor {
         this.config=config;
         this.htmlGenerator=new HTMLGenerator(this.config, ejsTemplateDirName);
         this.indexFile=join(this.reportDir, 'index.html');
-        this.indexContent={links: []};
+        this.indexContent={links: [],
+                           title: this.config.title||"Org report",
+                           subtitle: this.config.subtitle||"Direct from your metadata"};
     }
     
     document() {

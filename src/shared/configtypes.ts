@@ -1,6 +1,8 @@
 interface DocumentorConfig {
     redact: boolean;
     version: string;
+    title: string;
+    subtitle: string;
 }
 
 interface MetadataMember {

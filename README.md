@@ -7,31 +7,15 @@ Bob Buzzard&#39;s Salesforce CLI Plugin to allow documentation to be autogenerat
 [![Downloads/week](https://img.shields.io/npm/dw/bbdoc.svg)](https://npmjs.org/package/bbdoc)
 [![License](https://img.shields.io/npm/l/bbdoc.svg)](https://github.com/keirbowden/LDNSCall2020Plugin/blob/master/package.json)
 
-<!-- toc -->
 
-<!-- tocstop -->
-<!-- install -->
-<!-- usage -->
 ```sh-session
-$ npm install -g bbdoc
-$ sfdx COMMAND
-running command...
-$ sfdx (-v|--version|version)
-bbdoc/3.3.0 darwin-x64 node-v11.10.1
-$ sfdx --help [COMMAND]
-USAGE
-  $ sfdx COMMAND
-...
-```
-<!-- usagestop -->
-<!-- commands -->
-* [`sfdx bbdoc:doc -r <string> -s <string> [-c <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-bbdocdoc--r-string--s-string--c-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+INSTALLING
+  $ sfdx plugins:install bbdoc
+  $ sfdx plugins
+    @salesforce/sfdx-diff 0.0.6
+       ...
+    bbdoc 3.4.0
 
-## `sfdx bbdoc:doc -r <string> -s <string> [-c <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
-
-generate documentation for an org
-
-```
 USAGE
   $ sfdx bbdoc:doc -r <string> -s <string> [-c <string>] [--json] [--loglevel 
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
@@ -51,11 +35,10 @@ OPTIONS
                                                                                     this command invocation
 
 EXAMPLE
-  $ sfdx bbdoc:doc --config ./config/bbdoc-config.jsob --report-dir ./report --source-dir force-app/main/default
+  $ sfdx bbdoc:doc --config ./config/bbdoc-config.json --report-dir ./report --source-dir force-app/main/default
   Documenting Org
   Documented Org
   Report generated at report/index.html
 ```
 
-_See code: [lib/commands/bbdoc/doc.js](https://github.com/keirbowden/LDNSCall2020Plugin/blob/v3.3.0/lib/commands/bbdoc/doc.js)_
-<!-- commandsstop -->
+_See code: [lib/commands/bbdoc/doc.js](https://github.com/keirbowden/LDNSCall2020Plugin/blob/v3.4.0/lib/commands/bbdoc/doc.js)_
