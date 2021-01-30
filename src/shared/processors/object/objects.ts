@@ -41,7 +41,12 @@ class ObjectProcessor {
         this.content={groups: [],
                      missingDescriptions: [],
                      counter: 0,
-                     description: this.mdSetup.description};
+                     description: this.mdSetup.description,
+                     header: {
+                        backgroundColor: (this.mdSetup.backgroundColor||config.backgroundColor),
+                        color: (this.mdSetup.color||config.color)
+                    }
+                    };
     }
 
     process() {
@@ -189,7 +194,12 @@ class ObjectProcessor {
                           description: group.description, 
                           link: group.name + '.html', 
                           objects : [],
-                          menuItems : []};
+                          menuItems : [],
+                          header: {
+                            backgroundColor: (group.backgroundColor||this.mdSetup.backgroundColor),
+                            color: (group.color||this.mdSetup.color)
+                        }
+                };
 
         this.content.groups.push(contentGroup);
         for (let mem of group.members) {

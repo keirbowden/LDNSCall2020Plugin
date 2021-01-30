@@ -36,7 +36,12 @@ class AuraEnabledProcessor {
 
         this.content = {groups: [],
                      counter: 0,
-                     noAccess: []};
+                     noAccess: [],
+                     header: {
+                         backgroundColor: (this.mdSetup.backgroundColor||config.backgroundColor),
+                         color: (this.mdSetup.color||config.color)
+                     }
+                    };
     }
 
     public process() {
@@ -181,7 +186,12 @@ class AuraEnabledProcessor {
                           description: group.description,
                           link: group.name + '.html',
                           auraenabled : [],
-                          menuItems : []};
+                          menuItems : [],
+                          header: {
+                            backgroundColor: (group.backgroundColor||this.mdSetup.backgroundColor),
+                            color: (group.color||this.mdSetup.color)
+                        }
+                    };
 
         this.content.groups.push(contentGroup);
         for (let mem of group.members) {
@@ -203,9 +213,9 @@ class AuraEnabledProcessor {
         // console.log('Body = ' + body);
         const pos = body.indexOf('<aura:component ');
 
-        const controllerPos = body.indexOf('controller="', pos) + 12;
-
-        if (null !== controllerPos) {
+        let controllerPos = body.indexOf('controller="', pos);
+        if (-1!=controllerPos) {
+            controllerPos+=12;
             const endPos = body.indexOf('"', controllerPos);
 
             const controller = body.slice(controllerPos, endPos);

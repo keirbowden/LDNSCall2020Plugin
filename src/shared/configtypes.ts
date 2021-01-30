@@ -3,6 +3,8 @@ interface DocumentorConfig {
     version: string;
     title: string;
     subtitle: string;
+    backgroundColor : string;
+    color: string;
 }
 
 interface MetadataMember {
@@ -31,6 +33,8 @@ interface MetadataGroup {
     description: string;
     started: boolean;
     menu: MetadataGroupMenu;
+    backgroundColor: string;
+    color: string;
     members: Array<MetadataGroupMember>
 }
 
@@ -40,6 +44,8 @@ interface Metadata {
     description: string;
     image: string;
     members: Array<MetadataMember>;
+    backgroundColor: string;
+    color: string;
 };
 
 export {Metadata, MetadataGroup, MetadataGroupMember, DocumentorConfig}

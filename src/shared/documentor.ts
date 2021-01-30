@@ -21,11 +21,25 @@ class Documentor {
         this.sourceDir=sourceDir;
         this.reportDir=reportDir;
         this.config=config;
+        if (!this.config.backgroundColor) {
+            this.config.backgroundColor="#c9a9d6";
+        }
+
+        if (!this.config.color) {
+            this.config.color="#01010c";
+        }
+
         this.htmlGenerator=new HTMLGenerator(this.config, ejsTemplateDirName);
         this.indexFile=join(this.reportDir, 'index.html');
         this.indexContent={links: [],
                            title: this.config.title||"Org report",
-                           subtitle: this.config.subtitle||"Direct from your metadata"};
+                           subtitle: this.config.subtitle||"Direct from your metadata",
+                           header: {
+                                backgroundColor: this.config.backgroundColor,
+                                color: this.config.color
+                            }
+                           };
+
     }
     
     document() {

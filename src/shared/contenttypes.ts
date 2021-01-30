@@ -2,8 +2,13 @@ interface IndexContent {
     links: Array<ContentLink>;
     title: string;
     subtitle: string;
+    header: HeaderStyle;
 }
 
+interface HeaderStyle {
+    backgroundColor: string;
+    color: string;
+}
 interface ContentLink {
     title: string;
     href: string;
@@ -18,6 +23,7 @@ interface ObjectsContent {
     counter: number;
     groups: Array<ObjectGroupContent>;
     missingDescriptions: Array<String>;
+    header: HeaderStyle;
     footer?: object;
 }
 
@@ -25,6 +31,7 @@ interface ObjectGroupContent {
     name: string;
     title: string,
     description: string,
+    header: HeaderStyle;
     link: string,
     objects : Array<ObjectContent>,
     menuItems : Array<ContentLink>
@@ -54,6 +61,7 @@ interface TriggersContent {
     counter: number;
     groups: Array<TriggerGroupContent>;
     duplicates?: Array<TriggerDuplicate>;
+    header: HeaderStyle;
     footer?: object;
 }
 
@@ -63,6 +71,7 @@ interface TriggerGroupContent {
     description: string,
     link: string,
     triggers : Array<TriggerContent>,
+    header: HeaderStyle;
     menuItems : Array<ContentLink>
 }
 
@@ -88,6 +97,7 @@ interface AuraEnabledHeaderContent {
     groups: Array<AuraEnabledGroupContent>;
     noAccess: string[];
     footer?: object;
+    header: HeaderStyle;
 }
 
 interface AuraEnabledGroupContent {
@@ -97,6 +107,7 @@ interface AuraEnabledGroupContent {
     link: string,
     auraenabled : Array<AuraEnabledContent>,
     menuItems : Array<ContentLink>
+    header: HeaderStyle;
 }
 
 interface AuraEnabledContent {

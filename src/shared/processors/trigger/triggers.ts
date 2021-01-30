@@ -34,7 +34,12 @@ class TriggerProcessor {
     
 
         this.content={groups: [],
-                     counter: 0};
+                     counter: 0,
+                     header: {
+                        backgroundColor: (this.mdSetup.backgroundColor||config.backgroundColor),
+                        color: (this.mdSetup.color||config.color)
+                    }
+            };
     }
 
     process() {
@@ -176,7 +181,12 @@ class TriggerProcessor {
                           description: group.description, 
                           link: group.name + '.html', 
                           triggers : [],
-                          menuItems : []};
+                          menuItems : [],
+                          header: {
+                            backgroundColor: (group.backgroundColor||this.mdSetup.backgroundColor),
+                            color: (group.color||this.mdSetup.color)
+                        }
+                    };
 
         this.content.groups.push(contentGroup);
         for (let mem of group.members) {
