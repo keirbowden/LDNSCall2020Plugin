@@ -41,6 +41,7 @@ interface MetadataGroup {
 interface Metadata {
     groups: Map<string, MetadataGroup>;
     subdirectory: string;
+    reportDirectory: string;
     description: string;
     image: string;
     members: Array<MetadataMember>;

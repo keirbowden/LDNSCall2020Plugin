@@ -19,16 +19,18 @@ class AuraEnabledProcessor {
     private indexFile : string;
     private generator : HTMLGenerator;
     private groupFile : string;
+    private reportSubdir: string;
     private content: AuraEnabledHeaderContent; 
     private profilesAndPermSetsByClassname : Map<string, ClassAndProfilesPermSets>;
 
     constructor(config, sourceDir, outputDir, generator) {
-        this.outputDir=join(outputDir, 'auraenabled');
-        createDirectory(this.outputDir);
-
         this.generator=generator;
 
         this.mdSetup = config['auraenabled'] as Metadata;
+        this.reportSubdir=this.mdSetup.reportDirectory||'auraenabled';
+        this.outputDir=join(outputDir, this.reportSubdir);
+        createDirectory(this.outputDir);
+
         this.groups = this.mdSetup.groups;
         this.sourceDir = sourceDir + this.mdSetup.subdirectory;
 
@@ -66,7 +68,7 @@ class AuraEnabledProcessor {
 
         let auraEnabledLink: ContentLink = {
             title: 'Aura Enabled',
-            href: 'auraenabled/auraenabled.html',
+            href: this.reportSubdir+ '/auraenabled.html',
             image: this.mdSetup.image,
             description: this.mdSetup.description,
             warning: false,

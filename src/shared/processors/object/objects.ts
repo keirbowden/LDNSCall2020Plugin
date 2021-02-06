@@ -16,21 +16,24 @@ class ObjectProcessor {
     indexFile : string;
     generator : HTMLGenerator;
     groupFile : string;
+    reportSubdir: string;
     content: ObjectsContent; 
     missingDescriptions: boolean;
     private pageLayoutDataByObjectAndFieldName : Map<string, ObjectPageLayoutData[]>;
-
 
     constructor(config, sourceDir, outputDir, generator) {
     
         this.config=config;
         this.missingDescriptions=false;
-        this.outputDir=join(outputDir, 'objects');
-        createDirectory(this.outputDir);
 
         this.generator=generator;
 
         this.mdSetup=<Metadata>config['objects'];
+        this.reportSubdir=this.mdSetup.reportDirectory||'objects';
+        this.outputDir=join(outputDir, this.reportSubdir);
+        console.log('Outputdir = ' + this.outputDir);
+        createDirectory(this.outputDir);
+
         this.groups=this.mdSetup.groups;
         this.parentDir=sourceDir;
         this.sourceDir=sourceDir+this.mdSetup.subdirectory;
@@ -71,7 +74,7 @@ class ObjectProcessor {
 
         let objectLink: ContentLink = {
             title: 'Objects',
-            href: 'objects/objects.html',
+            href: this.reportSubdir + '/objects.html',
             image: this.mdSetup.image,
             description: this.mdSetup.description, 
             warning: this.missingDescriptions,
@@ -274,6 +277,10 @@ class ObjectProcessor {
             const key : string = contentObj.name + ':' + field.fullName;
             field.pageLayoutInfo=this.pageLayoutDataByObjectAndFieldName.get(key);
             contentObj.fields.push(field);
+            if ( (!field.pageLayoutInfo) && 
+                 (''==field.background) ) {
+                field.background='#f5dfea';
+            }
         }
     }
 

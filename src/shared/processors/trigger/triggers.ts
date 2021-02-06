@@ -15,17 +15,19 @@ class TriggerProcessor {
     indexFile : string;
     generator : HTMLGenerator;
     groupFile : string;
+    reportSubdir : string;
     content: TriggersContent; 
 
     constructor(config, sourceDir, outputDir, generator) {
     
         this.config=config;
-        this.outputDir=join(outputDir, 'triggers');
-        createDirectory(this.outputDir);
-
         this.generator=generator;
 
         this.mdSetup=<Metadata>config['triggers'];
+        this.reportSubdir=this.mdSetup.reportDirectory||'triggers';
+        this.outputDir=join(outputDir, this.reportSubdir);
+        createDirectory(this.outputDir);
+
         this.groups=this.mdSetup.groups;
         this.parentDir=sourceDir;
         this.sourceDir=sourceDir+this.mdSetup.subdirectory;
@@ -65,7 +67,7 @@ class TriggerProcessor {
 
         let triggerLink: ContentLink = {
             title: 'Triggers',
-            href: 'triggers/triggers.html',
+            href: this.reportSubdir + '/triggers.html',
             image: this.mdSetup.image,
             description: this.mdSetup.description, 
             warning: false,
