@@ -31,7 +31,6 @@ class ObjectProcessor {
         this.mdSetup=<Metadata>config['objects'];
         this.reportSubdir=this.mdSetup.reportDirectory||'objects';
         this.outputDir=join(outputDir, this.reportSubdir);
-        console.log('Outputdir = ' + this.outputDir);
         createDirectory(this.outputDir);
 
         this.groups=this.mdSetup.groups;
