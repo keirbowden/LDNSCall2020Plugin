@@ -35,6 +35,7 @@ interface MetadataGroup {
     menu: MetadataGroupMenu;
     backgroundColor: string;
     color: string;
+    columns?:Array<String>;
     members: Array<MetadataGroupMember>
 }
 
@@ -47,6 +48,7 @@ interface Metadata {
     members: Array<MetadataMember>;
     backgroundColor: string;
     color: string;
+    columns?:Array<String>;
 };
 
 export {Metadata, MetadataGroup, MetadataGroupMember, DocumentorConfig}

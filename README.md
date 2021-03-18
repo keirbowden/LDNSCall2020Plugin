@@ -42,3 +42,5 @@ EXAMPLE
 ```
 
 _See code: [src/commands/bbdoc/doc.ts](https://github.com/keirbowden/LDNSCall2020Plugin/blob/V3.4.0/src/commands/bbdoc/doc.ts)_
+
+For more information, including how to configure the plug-in for a specific codebase, see the [Org Documentor Documented](https://sites.google.com/view/orgdocumentor)

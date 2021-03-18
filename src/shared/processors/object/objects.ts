@@ -20,9 +20,12 @@ class ObjectProcessor {
     content: ObjectsContent; 
     missingDescriptions: boolean;
     private pageLayoutDataByObjectAndFieldName : Map<string, ObjectPageLayoutData[]>;
+    defaultColumns: Array<String>;
 
     constructor(config, sourceDir, outputDir, generator) {
     
+        this.defaultColumns=['Name', 'Label', 'Type', 'Description', 'Info', 'Page Layouts',
+                             'Security', 'Compliance', 'In Use', 'Encrypted'];
         this.config=config;
         this.missingDescriptions=false;
 
@@ -47,7 +50,8 @@ class ObjectProcessor {
                      header: {
                         backgroundColor: (this.mdSetup.backgroundColor||config.backgroundColor),
                         color: (this.mdSetup.color||config.color)
-                    }
+                    },
+                    columns: (this.mdSetup.columns||this.defaultColumns)
                     };
     }
 
@@ -200,7 +204,8 @@ class ObjectProcessor {
                           header: {
                             backgroundColor: (group.backgroundColor||this.mdSetup.backgroundColor),
                             color: (group.color||this.mdSetup.color)
-                        }
+                          },
+                          columns: (group.columns||this.content.columns)
                 };
 
         this.content.groups.push(contentGroup);
@@ -277,7 +282,8 @@ class ObjectProcessor {
             field.pageLayoutInfo=this.pageLayoutDataByObjectAndFieldName.get(key);
             contentObj.fields.push(field);
             if ( (!field.pageLayoutInfo) && 
-                 (''==field.background) ) {
+                 (''==field.background) && 
+                 (this.content.columns.includes('Page Layouts')) ) {
                 field.background='#f5dfea';
             }
         }
@@ -291,7 +297,12 @@ class ObjectProcessor {
             fullType: "",
             description: fldMd.description,
             sfField: fldMd,
-            additionalInfo: ""
+            additionalInfo: "",
+            securityClassification: "",
+            complianceGroup: "",
+            businessStatus: "",
+            encrypted: ""
+        
         };
 
         if ( (!field.label) && (-1==field.fullName.indexOf('__c')) ) {
@@ -336,6 +347,22 @@ class ObjectProcessor {
             type="N/A (standard field)";
         }
     
+        field.securityClassification=fldMd.securityClassification||'';
+
+        field.complianceGroup=fldMd.complianceGroup||'';
+        field.businessStatus=fldMd.businessStatus||'';
+
+        if (typeof fldMd.encrypted != 'undefined') {
+            var encrypted=fldMd.encrypted;
+            if (encrypted) {
+                var encryptionScheme=fldMd.encryptionScheme;
+                field.encrypted=encrypted + '(' + encryptionScheme + ')';
+            }
+            else {
+                field.encrypted=encrypted;
+            }
+        }
+        
         field.additionalInfo=addAdditionalFieldInfo(fldMd, type);
         field.fullType=type;
 

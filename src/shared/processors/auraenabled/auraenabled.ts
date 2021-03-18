@@ -157,7 +157,7 @@ class AuraEnabledProcessor {
                 if ('other'!=groupName) {
                     // expand the members based on prefixes/literals
                     for (const member of this.mdSetup.members) {
-                        if ( ((group.triggers) && (group.triggers.includes(member.name))) ||
+                        if ( ((group.auraenabled) && (group.auraenabled.includes(member.name))) ||
                              ((typeof group.prefix !=='undefined') && member.name.startsWith(group.prefix)) ||
                              ((typeof group.additional !== 'undefined') && (group.additional.includes(member)))
                             )

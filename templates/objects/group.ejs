@@ -64,32 +64,82 @@
                 <table class="table table-bordered">
                     <thead class="thead-light">
                         <tr>
-                            <th style="width:15%">Name</th>
-                            <th style="width:13%">Label</th>
-                            <th style="width:10%">Type</th>
-                            <th style="width:30%">Description</th>
-                            <th style="width:16%">Info</th>
-                            <th style="width:16%">Page Layouts</th>
+                            <% if (content.columns.includes('Name')) { %>
+                                <th>Name</th>
+                            <% } %>
+                            <% if (content.columns.includes('Label')) { %>
+                                <th>Label</th>
+                            <% } %>
+                            <% if (content.columns.includes('Type')) { %>
+                                <th>Type</th>
+                            <% } %>
+                            <% if (content.columns.includes('Description')) { %>
+                                <th>Description</th>
+                            <% } %>
+                            <% if (content.columns.includes('Security')) { %>
+                                <th>Security</th>
+                            <% } %>
+                            <% if (content.columns.includes('Compliance')) { %>
+                                <th>Compliance</th>
+                            <% } %>
+                            <% if (content.columns.includes('In Use')) { %>
+                                <th>In Use</th>
+                            <% } %>
+                            <% if (content.columns.includes('Encrypted')) { %>
+                                <th>Encrypted</th>
+                            <% } %>
+                            <% if (content.columns.includes('Info')) { %>
+                                <th>Info</th>
+                            <% } %>
+                            <% if (content.columns.includes('Page Layouts')) { %>
+                                <th>Page Layouts</th>
+                            <% } %>
                         </tr>
                     </thead>
+                    <tbody>
                     <% object.fields.forEach(function(field){ %>
-                    <tr style="background-color: <%= field.background %>">
-                        <td><%= field.fullName %></td>
-                        <td><%= field.label %></td>
-                        <td><%= field.fullType %></td>
-                        <td><%- field.description %></td>
-                        <td><%- field.additionalInfo %></td>
-                        <td><% if (typeof field.pageLayoutInfo == 'object' && field.pageLayoutInfo && field.pageLayoutInfo.length>0) { %>
+                        <tr style="background-color: <%= field.background %>">
+                            <% if (content.columns.includes('Name')) { %>
+                                <td><%= field.fullName %></td>
+                            <% } %>
+                            <% if (content.columns.includes('Label')) { %>
+                                <td><%= field.label %></td>
+                            <% } %>
+                            <% if (content.columns.includes('Type')) { %>
+                                <td><%= field.fullType %></td>
+                            <% } %>
+                            <% if (content.columns.includes('Description')) { %>
+                                <td><%- field.description %></td>
+                            <% } %>
+                            <% if (content.columns.includes('Security')) { %>
+                                <td><%- field.securityClassification %></td>
+                            <% } %>
+                            <% if (content.columns.includes('Compliance')) { %>
+                                <td><%- field.complianceGroup %></td>
+                            <% } %>
+                            <% if (content.columns.includes('In Use')) { %>
+                                <td><%- field.businessStatus %></td>
+                            <% } %>
+                            <% if (content.columns.includes('Encrypted')) { %>
+                                <td><%- field.encrypted %></td>
+                            <% } %>
+                            <% if (content.columns.includes('Info')) { %>
+                                <td><%- field.additionalInfo %></td>
+                            <% } %>
+                            <% if (content.columns.includes('Page Layouts')) { %>
+                                <td><% if (typeof field.pageLayoutInfo == 'object' && field.pageLayoutInfo && field.pageLayoutInfo.length>0) { %>
                                 <% field.pageLayoutInfo.forEach(function(pageLayoutEntry, idx, array) { %>
                                   <%- pageLayoutEntry.layoutName %> (<b><%- pageLayoutEntry.behavior %></b>)<br/>
                                   <% if (idx!=array.length-1) { %>
                                   <hr/>    
                                   <% } %>
                                 <% }); %>
+                                <% } %>
+                                </td>
                             <% } %>
-                            </td>
-                    </tr>
+                        </tr>
                     <% }); %>
+                    </tbody>
                 </table>
 
                 <% if (typeof object.validationRules == 'object' && object.validationRules && object.validationRules.length>0) { %>

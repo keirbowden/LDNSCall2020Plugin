@@ -25,6 +25,7 @@ interface ObjectsContent {
     missingDescriptions: Array<String>;
     header: HeaderStyle;
     footer?: object;
+    columns?:Array<String>;
 }
 
 interface ObjectGroupContent {
@@ -34,6 +35,7 @@ interface ObjectGroupContent {
     header: HeaderStyle;
     link: string,
     objects : Array<ObjectContent>,
+    columns?:Array<String>;
     menuItems : Array<ContentLink>
 }
 
@@ -55,6 +57,10 @@ interface ObjectFieldContent {
     sfField: object;
     additionalInfo: string;
     pageLayoutInfo?: ObjectPageLayoutData[];
+    securityClassification: string;
+    complianceGroup: string;
+    businessStatus: string;
+    encrypted: string;
 }
 
 interface TriggersContent {
