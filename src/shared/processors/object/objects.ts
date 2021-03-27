@@ -237,7 +237,8 @@ class ObjectProcessor {
                                 sfObject: md.CustomObject,
                                 fields: [],
                                 validationRules: [],
-                                recordTypes: []};
+                                recordTypes: [],
+                                badges: []};
                 contentGroup.objects.push(contentObj);
                                 
                 this.processFields(mem.member, contentObj);
@@ -269,6 +270,7 @@ class ObjectProcessor {
     processFields(member, contentObj) {
         let fieldsDir=join(member.subdir, 'fields');
         let fields=getDirectoryEntries(fieldsDir);
+        let badges=new Map();
         for (let idx=0, len=fields.length; idx<len; idx++) {
             let fldMd=parseXMLToJS(join(fieldsDir, fields[idx]));
             enrichField(member.name, fldMd.CustomField, this.parentDir);
@@ -286,7 +288,21 @@ class ObjectProcessor {
                  (this.content.columns.includes('Page Layouts')) ) {
                 field.background='#f5dfea';
             }
+            if ( ('Lookup'==field.fullType) || ('MasterDetail'==field.fullType) ) {
+                let relationshipCount=badges.get('Relationships')||0;
+                badges.set('Relationships', ++relationshipCount);
+            }
+
+            if (-1!=field.fullName.indexOf('__c')) {
+                let fieldCount=badges.get('Fields')||0;
+                badges.set('Fields', ++fieldCount);
+            }
         }
+
+        badges.forEach((value, key) => {
+            contentObj.badges.push(key + ' : ' + value);
+        });
+        contentObj.badges=contentObj.badges.sort();
     }
 
     outputField(fldMd) {

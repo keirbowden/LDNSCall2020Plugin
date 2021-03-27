@@ -37,6 +37,11 @@
             <div class="card-body">        
                 <h6 class="card-subtitle mb-2 text-muted"><strong>API Name : </strong><%= object.name %></h6>
                 <p><%= object.sfObject.description %></p>
+                <% if (object.badges.length>0) { %>
+                    <% object.badges.forEach(function(badge) { %>
+                        <span class="badge badge-pill badge-secondary"><%= badge %></span>
+                    <% }); %>
+                <% } %>
                 <% if (typeof object.recordTypes == 'object' && object.recordTypes && object.recordTypes.length>0) { %>
                 <h5 class="pt-3">Record Types</h5>
 

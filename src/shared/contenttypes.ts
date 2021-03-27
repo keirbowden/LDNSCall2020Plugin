@@ -46,6 +46,7 @@ interface ObjectContent {
     fields: Array<ObjectFieldContent>;
     validationRules: Array<object>;
     recordTypes: Array<Object>;
+    badges: Array<String>;
 }
 
 interface ObjectFieldContent {
