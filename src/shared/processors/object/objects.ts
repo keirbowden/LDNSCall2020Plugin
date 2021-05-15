@@ -263,7 +263,9 @@ class ObjectProcessor {
         let recTypes=getDirectoryEntries(recTypesDir);
         for (let idx=0, len=recTypes.length; idx<len; idx++) {
             let recTypeMd=parseXMLToJS(join(recTypesDir, recTypes[idx]));
-            contentObj.recordTypes.push(recTypeMd.RecordType);
+            if (recTypeMd.RecordType){
+                contentObj.recordTypes.push(recTypeMd.RecordType);
+            }
         }
     }
 

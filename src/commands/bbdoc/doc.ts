@@ -59,7 +59,8 @@ Report generated at report/index.html
       mkdirSync(imageDir);
     }
 
-    const sourceDir = this.flags['source-dir'];
+    let sourceDir = this.flags['source-dir'];
+    sourceDir = sourceDir.endsWith('/') ? sourceDir : sourceDir + '/';
 
     // load the config, using the default if nothing provided via flags
     let config;
