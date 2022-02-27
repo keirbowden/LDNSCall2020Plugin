@@ -1,0 +1,103 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <%- include ('../common/styles', {header: content.header}) %>
+    </head>
+
+    <body>
+        <div class="doc-header">
+            <nav aria-label="breadcrumb" class="container">
+                <ol class="breadcrumb doc-header">
+                    <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="orderofexecution.html">Order of Execution</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><%= content.title %></li>
+                </ol>
+            </nav>
+            <div class="jumbotron jumbotron-fluid doc-header">
+                <div class="container">
+                    <h1 class="display-4"><%= content.title %></h1>
+                    <p class="lead"><%= content.description %></p>
+                </div>
+            </div>            
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <% content.ele.automation.forEach(function(obj){ %>
+                <div class="col-3">
+                    <% if (obj.items.length===0) { %>
+                        <i><a href="#<%= 'step' + obj.index %>" class="text-info"><%= obj.index %>. <%= obj.name %></a></i>
+                    <% } else { %>
+                    <b><a href="#<%= 'step' + obj.index %>"><%= obj.index %>. <%= obj.name %></a></b>
+                    <span class="badge badge-pill badge-info"><%= obj.items.length %></span> 
+                    <% } %>
+                </div>
+                <div class="col-1">
+                    <% if (!obj.supported) { %>
+                        <span class="badge badge-pill badge-danger">not available</span> 
+                    <% } else if (!obj.implemented) { %>
+                        <span class="badge  badge-pill badge-warning">not implemented</span> 
+                    <% } %>
+                </div>
+                <div class="col-8">
+                </div>
+            <% }); %>
+
+        </div>
+
+            <br/>
+            <% content.ele.automation.forEach(function(obj){ %>
+                <div class="card mb-4" style="width: 100%">
+                    <div class="card-header">
+                        <b><a name="<%= 'step' + obj.index %>"> <%= obj.index %>. <%= obj.name %></a></b>
+                        <% if (obj.ordered) { %>
+                            <span class="badge  badge-pill badge-success">ordered</span> 
+                        <% } %>
+                    </div>
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                              <div class="col-sm">
+                                 <%
+                                      if (!obj.supported) {
+                                 %>
+                                        <p class="alert alert-danger">This step is not available for automation</p>
+                                <%    } else if (!obj.implemented) { %>
+                                        <p class="alert alert-warning">Not yet implemented in the Org Documentor. </p>
+                                <%      
+                                    } else if (obj.items.length===0) { %>
+                                        <div class="text-primary"><i>No automation steps defined.</i></div>
+                                <% } else { 
+                                    obj.items.forEach(step => {
+                                        %>
+                                        <div>
+                                            <div>
+                                                <% if (obj.ordered) { %>
+                                                    <b><%= step.index %>.</b>&nbsp;
+                                                <% } %>
+                                                <%- step.name %>
+                                            </div>
+                                        </div>        
+                                    <% });
+                                } 
+                                if (obj.notes) { %>
+                                    <p class="alert alert-warning"><%= obj.notes %></p>
+                                <% } %>
+                              </div>
+                              <div class="col-sm">
+                                <details class="mb-3">
+                                    <summary>Description</summary>
+                                    <p><%- obj.description %></p>
+            
+                                  </details>
+                              </div>
+                            </div>
+                          </div>                        
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+        <%- include ('../common/footer') %>
+    </body>
+
+</html>

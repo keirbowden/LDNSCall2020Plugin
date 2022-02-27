@@ -14,7 +14,7 @@ INSTALLING
   $ sfdx plugins
     @salesforce/sfdx-diff 0.0.6
        ...
-    bbdoc 3.6.0
+    bbdoc 4.0.0
 
 USAGE
   $ sfdx bbdoc:doc -r <string> -s <string> [-c <string>] [--json] [--loglevel 

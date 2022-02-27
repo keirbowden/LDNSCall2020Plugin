@@ -1,8 +1,8 @@
-import { join } from 'path';
+import { join, parse } from 'path';
 import { lstatSync, writeFileSync, readFileSync } from 'fs';
 import { HTMLGenerator } from '../../htmlGenerator';
 import { createDirectory, parseXMLToJS, getDirectoryEntries } from '../../files';
-import { ContentLink, TriggersContent, TriggerGroupContent, TriggerContent } from '../../contenttypes';
+import { ContentLink, TriggersContent, TriggerGroupContent, TriggerContent, AutomationStep } from '../../contenttypes';
 import { Metadata, MetadataGroup, DocumentorConfig } from '../../configtypes';
 
 class TriggerProcessor {
@@ -17,11 +17,13 @@ class TriggerProcessor {
     groupFile : string;
     reportSubdir : string;
     content: TriggersContent; 
+    automation: Map<string, Map<number, AutomationStep>>;
 
-    constructor(config, sourceDir, outputDir, generator) {
+    constructor(config, sourceDir, outputDir, generator, automation) {
     
         this.config=config;
         this.generator=generator;
+        this.automation=automation;
 
         this.mdSetup=<Metadata>config['triggers'];
         this.reportSubdir=this.mdSetup.reportDirectory||'triggers';
@@ -92,7 +94,6 @@ class TriggerProcessor {
                 }
 
                 trigger.actions.toLowerCase().split(',').forEach(action => {
-                    //console.log('Processing action ' + action);
                     let actionTriggers;
                     if (actionsMap.has(action)) {
                         actionTriggers=actionsMap.get(action);
@@ -102,8 +103,19 @@ class TriggerProcessor {
                         actionsMap.set(action, actionTriggers);
                     }
 
-                    actionTriggers.push(trigger.name.replace('.trigger', ''));
+                    const triggerPrefix=trigger.name.replace('.trigger', '');
+                    actionTriggers.push(triggerPrefix);
                     //console.log('Actions triggers = ' + actionTriggers);
+                    if (trigger.triggerMeta.status==='Active') {
+                        const actionEles=action.split(/\s+/);
+                        if (['insert', 'update'].includes(actionEles[1].toLowerCase())) {
+                            let pos=4;
+                            if (actionEles[0]=='after') {
+                                pos=8;
+                            }
+                            this.automation.get(trigger.objectName).get(pos).items.push({index: -1, name: triggerPrefix});
+                        }
+                    }
                 })
             })
         })
@@ -214,8 +226,10 @@ class TriggerProcessor {
     }
 
     extractDetails(name, body, contentObj) {
-        //console.log('Body = ' + body);
-        let pos=body.indexOf('trigger ' + name );
+        // console.log('Body = ' + body);
+        const prefix=parse(name).name;
+        //console.log('Looking for ' + 'trigger ' + prefix);
+        let pos=body.indexOf('trigger ' + prefix );
         //console.log('Pos = ' + pos);
         // now skip to 'on'
         pos=body.indexOf(' on', pos);
