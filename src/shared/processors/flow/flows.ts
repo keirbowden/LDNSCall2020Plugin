@@ -1,10 +1,9 @@
 import { join } from 'path';
-import { lstatSync, writeFileSync, readFileSync } from 'fs';
+import { lstatSync, writeFileSync } from 'fs';
 import { HTMLGenerator } from '../../htmlGenerator';
 import { createDirectory, parseXMLToJS, getDirectoryEntries } from '../../files';
 import { ContentLink, FlowsContent, FlowGroupContent, FlowContent, AutomationStep } from '../../contenttypes';
 import { Metadata, MetadataGroup, DocumentorConfig } from '../../configtypes';
-import { Result } from '@salesforce/command';
 
 class FlowProcessor {
     groups : Map<string, MetadataGroup>;

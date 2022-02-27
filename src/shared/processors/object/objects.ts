@@ -2,7 +2,7 @@ import { join } from 'path';
 import { lstatSync, writeFileSync } from 'fs';
 import { HTMLGenerator } from '../../htmlGenerator';
 import { createDirectory, parseXMLToJS, getDirectoryEntries } from '../../files';
-import { ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, ObjectPageLayoutData, AutomationStep, IndexContent } from '../../contenttypes';
+import { ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, ObjectPageLayoutData, AutomationStep } from '../../contenttypes';
 import { Metadata, MetadataGroup, DocumentorConfig } from '../../configtypes';
 import { enrichField, addAdditionalFieldInfo } from './objectutils';
 import { getSteps } from '../../ooeutils';

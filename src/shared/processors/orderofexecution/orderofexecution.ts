@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { HTMLGenerator } from '../../htmlGenerator';
 import { createDirectory } from '../../files';
 import { FlowsContent, AutomationStep } from '../../contenttypes';

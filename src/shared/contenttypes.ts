@@ -86,10 +86,13 @@ interface TriggerContent {
     name: string;
     label: string;
     trigger: string;
-    triggerMeta: object;
+    triggerMeta: TriggerMeta;
     actions?: string;
     objectName?: string;
 
+}
+interface TriggerMeta {
+    status: string;
 }
 
 interface TriggerDuplicate {
