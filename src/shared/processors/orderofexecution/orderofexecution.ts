@@ -108,7 +108,7 @@ class OrderOfExecutionProcessor {
 
         const ooeLink = {
             title: 'Execution',
-            href: this.outputDir + '/orderofexecution.html',
+            href: this.reportSubdir + '/orderofexecution.html',
             image: this.config['orderofexecution'].image,
             description: this.config['orderofexecution'].description, 
             warning: false,
