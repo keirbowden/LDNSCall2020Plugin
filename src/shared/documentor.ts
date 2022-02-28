@@ -3,9 +3,12 @@ import { writeFileSync } from 'fs';
 import {HTMLGenerator} from './htmlGenerator';
 import {AuraEnabledProcessor} from './processors/auraenabled/auraenabled';
 import {ObjectProcessor} from './processors/object/objects';
+import {FlowProcessor} from './processors/flow/flows';
 import {TriggerProcessor} from './processors/trigger/triggers';
+import {OrderOfExecutionProcessor} from './processors/orderofexecution/orderofexecution';
 import { DocumentorConfig } from './configtypes';
 import { IndexContent } from './contenttypes';
+import { AutomationStep } from './contenttypes';
 
 class Documentor {
     sourceDir : string;
@@ -16,6 +19,9 @@ class Documentor {
     indexFile: string;
     indexContent : IndexContent;
     ejsTemplateDirName: string;
+    objectAutomation: Map<string, Map<number, AutomationStep>>;
+    rollUpSummaries: Map<String, Array<String>>;
+
 
     constructor(sourceDir: string, reportDir: string, config : DocumentorConfig, ejsTemplateDirName: string) {
         this.sourceDir=sourceDir;
@@ -40,10 +46,12 @@ class Documentor {
                             }
                            };
 
+        this.objectAutomation=new Map();
+        this.rollUpSummaries=new Map();
     }
     
     document() {
-        for (let mdType of ['objects', 'triggers', 'auraenabled']) {
+        for (let mdType of ['objects', 'triggers', 'flows', 'auraenabled', 'orderofexecution']) {
             if (this.config[mdType]!==undefined) {
                 this.process(mdType);
             }
@@ -51,7 +59,7 @@ class Documentor {
         this.htmlGenerator.generateHTML('index.ejs', this.indexContent)
         .then(html => {
             writeFileSync(this.indexFile, html);
-
+            //console.log('Object automation = ' + JSON.stringify(Object.fromEntries(this.objectAutomation), null, 4));
         })
         .catch(err => {
             console.log('Error ' + err);
@@ -62,20 +70,31 @@ class Documentor {
         let link;
         switch (mdType) {
             case 'objects':
-                const objects = new ObjectProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
+                const objects = new ObjectProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator, this.objectAutomation, this.rollUpSummaries);
                 link = objects.process();
                 break;
 
             case 'triggers':
-                const triggers = new TriggerProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
+                const triggers = new TriggerProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator, this.objectAutomation);
                 link = triggers.process();
+                break;
+
+            case 'flows':
+                const flows = new FlowProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator, this.objectAutomation);
+                link = flows.process();
                 break;
 
             case 'auraenabled':
                 const auraenabled = new AuraEnabledProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator);
                 link = auraenabled.process();
                 break;
-            }
+
+            case 'orderofexecution':
+                const orderofexecution = new OrderOfExecutionProcessor(this.config, this.sourceDir, this.reportDir, this.htmlGenerator, this.objectAutomation, this.rollUpSummaries);
+                link = orderofexecution.process();
+
+                break;
+        }
 
         if (link) {
             this.indexContent.links.push(link);

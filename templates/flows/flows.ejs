@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <%- include ('../common/styles', {header: content.header}) %>
+    </head>
+
+    <body>
+        <div class="doc-header">
+            <nav aria-label="breadcrumb" class="container">
+                <ol class="breadcrumb doc-header">
+                    <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Flows</li>
+                </ol>
+            </nav>
+            <div class="jumbotron jumbotron-fluid doc-header">
+                <div class="container">
+                    <h1 class="display-4">Flows</h1>
+                    <p class="lead"><%= content.description %></p>
+                </div>
+            </div>                    
+        </div>
+        <div class="container-fluid">
+            <table class="table">
+                <tr>
+                    <th>Group</th>
+                    <th>Detail</th>
+                </tr>
+                <% content.groups.forEach(function(group){ %>
+                    <tr>
+                        <td><%= group.title %></td>
+                        <td><a href="<%= group.link %>">Click to View</a></td>
+                    </tr>
+                <% }); %>
+            </table>
+            
+            <h6 class="text-muted pt-4 text-right"><%= content.counter %> flows processed</h6>
+
+        </div>
+        <%- include ('../common/footer') %>
+    </body>
+
+</html>

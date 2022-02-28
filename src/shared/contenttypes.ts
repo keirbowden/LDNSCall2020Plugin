@@ -86,10 +86,13 @@ interface TriggerContent {
     name: string;
     label: string;
     trigger: string;
-    triggerMeta: object;
+    triggerMeta: TriggerMeta;
     actions?: string;
     objectName?: string;
 
+}
+interface TriggerMeta {
+    status: string;
 }
 
 interface TriggerDuplicate {
@@ -98,6 +101,31 @@ interface TriggerDuplicate {
     triggers: string;
 }
 
+interface FlowsContent {
+    counter: number;
+    groups: Array<FlowGroupContent>;
+    header: HeaderStyle;
+    footer?: object;
+}
+
+interface FlowGroupContent {
+    name: string;
+    title: string,
+    description: string,
+    link: string,
+    flows : Array<FlowContent>,
+    header: HeaderStyle;
+    menuItems : Array<ContentLink>
+}
+
+interface FlowContent {
+    name: string;
+    label: string;
+    flowMeta: string;
+    action?: string;
+    objectName?: string;
+
+}
 
 interface AuraEnabledHeaderContent {
     counter: number;
@@ -134,5 +162,23 @@ interface ObjectPageLayoutData {
     behavior: string;
 }
 
-export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, TriggersContent, TriggerGroupContent, TriggerContent, TriggerDuplicate,
-    AuraEnabledHeaderContent, AuraEnabledGroupContent, AuraEnabledContent, ObjectPageLayoutData}
+interface AutomationStep {
+    index: number;
+    name: string;
+    description: string;
+    items: Array<AutomationItem>;
+    ordered: boolean;
+    implemented: boolean;
+    notes?: string;
+}
+
+interface AutomationItem {
+    name: string;
+    meta?: object;
+    index: number;
+}
+
+export {IndexContent, ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, 
+    TriggersContent, TriggerGroupContent, TriggerContent, TriggerDuplicate,
+    FlowsContent, FlowGroupContent, FlowContent, 
+    AuraEnabledHeaderContent, AuraEnabledGroupContent, AuraEnabledContent, ObjectPageLayoutData, AutomationStep, AutomationItem}

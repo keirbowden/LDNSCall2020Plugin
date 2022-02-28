@@ -2,9 +2,10 @@ import { join } from 'path';
 import { lstatSync, writeFileSync } from 'fs';
 import { HTMLGenerator } from '../../htmlGenerator';
 import { createDirectory, parseXMLToJS, getDirectoryEntries } from '../../files';
-import { ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, ObjectPageLayoutData } from '../../contenttypes';
+import { ContentLink, ObjectsContent, ObjectGroupContent, ObjectContent, ObjectFieldContent, ObjectPageLayoutData, AutomationStep } from '../../contenttypes';
 import { Metadata, MetadataGroup, DocumentorConfig } from '../../configtypes';
 import { enrichField, addAdditionalFieldInfo } from './objectutils';
+import { getSteps } from '../../ooeutils';
 
 class ObjectProcessor {
     groups : Map<string, MetadataGroup>;
@@ -21,8 +22,10 @@ class ObjectProcessor {
     missingDescriptions: boolean;
     private pageLayoutDataByObjectAndFieldName : Map<string, ObjectPageLayoutData[]>;
     defaultColumns: Array<String>;
+    automation: Map<string, Map<number, AutomationStep>>;
+    rollUpSummaries: Map<string, Array<string>>;
 
-    constructor(config, sourceDir, outputDir, generator) {
+    constructor(config, sourceDir, outputDir, generator, automation, rollUpSummaries) {
     
         this.defaultColumns=['Name', 'Label', 'Type', 'Description', 'Info', 'Page Layouts',
                              'Security', 'Compliance', 'In Use', 'Encrypted'];
@@ -30,6 +33,8 @@ class ObjectProcessor {
         this.missingDescriptions=false;
 
         this.generator=generator;
+        this.automation=automation;
+        this.rollUpSummaries=rollUpSummaries;
 
         this.mdSetup=<Metadata>config['objects'];
         this.reportSubdir=this.mdSetup.reportDirectory||'objects';
@@ -240,7 +245,12 @@ class ObjectProcessor {
                                 recordTypes: [],
                                 badges: []};
                 contentGroup.objects.push(contentObj);
-                                
+    
+                if (null==this.automation.get(mem.member.name)) {
+                    let automationSteps=getSteps();
+
+                    this.automation.set(mem.member.name, automationSteps);
+                }
                 this.processFields(mem.member, contentObj);
                 this.processValidationRules(mem.member, contentObj);
                 this.processRecordTypes(mem.member, contentObj);
@@ -255,6 +265,9 @@ class ObjectProcessor {
         for (let idx=0, len=valRules.length; idx<len; idx++) {
             let valRuleMd=parseXMLToJS(join(valRulesDir, valRules[idx]));
             contentObj.validationRules.push(valRuleMd.ValidationRule);
+            if (valRuleMd.ValidationRule.active) {
+                this.automation.get(member.name).get(5).items.push({index: -1, name: valRuleMd.ValidationRule.fullName});
+            }
         }
     }
 
@@ -276,7 +289,7 @@ class ObjectProcessor {
         for (let idx=0, len=fields.length; idx<len; idx++) {
             let fldMd=parseXMLToJS(join(fieldsDir, fields[idx]));
             enrichField(member.name, fldMd.CustomField, this.parentDir);
-            let field=this.outputField(fldMd.CustomField);
+            let field=this.outputField(member, fldMd.CustomField);
             if (field.background=='orange') {
                 this.missingDescriptions=true;
                 this.content.missingDescriptions.push(member.name + '.' + field.fullName);
@@ -307,7 +320,7 @@ class ObjectProcessor {
         contentObj.badges=contentObj.badges.sort();
     }
 
-    outputField(fldMd) {
+    outputField(member, fldMd) {
         let field: ObjectFieldContent={
             fullName: fldMd.fullName.toString(),
             label: fldMd.label,
@@ -381,7 +394,7 @@ class ObjectProcessor {
             }
         }
         
-        field.additionalInfo=addAdditionalFieldInfo(fldMd, type);
+        field.additionalInfo=addAdditionalFieldInfo(member.name, fldMd, type, this.rollUpSummaries);
         field.fullType=type;
 
         return field;

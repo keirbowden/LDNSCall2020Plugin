@@ -1,7 +1,10 @@
 node_modules
 lib
 auraenabled
-images
+orderofexecution/*.html
 objects
 report
 triggers
+index.html
+auraenabled.html
+other.html

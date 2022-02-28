@@ -14,7 +14,7 @@ let enrichField= (objectName, field, parentDir) => {
 }
 
 
-let addAdditionalFieldInfo = (field, type) => {
+let addAdditionalFieldInfo = (objName, field, type, rollUpSummaries) => {
     var result='';
     if (type) {
         switch (type.toString()) {
@@ -27,7 +27,14 @@ let addAdditionalFieldInfo = (field, type) => {
                 break;
     
             case 'Summary':
-                result += '<strong>Roll Up Summary</strong> : ' + field.summaryOperation + '(' + field.summaryForeignKey + ')';
+                const fieldKey=field.summarizedField || field.summaryForeignKey;
+                result += '<strong>Roll Up Summary</strong> : ' + field.summaryOperation + '(' + field.summarizedField + ')';
+                let summariesForField=rollUpSummaries.get(fieldKey);
+                if (undefined===summariesForField) {
+                    summariesForField=new Array();
+                    rollUpSummaries.set(fieldKey, summariesForField);
+                };
+                summariesForField.push(objName + '.' + field.fullName);
                 break;
     
             case 'Html':
