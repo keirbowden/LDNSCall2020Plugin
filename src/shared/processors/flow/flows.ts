@@ -153,17 +153,19 @@ class FlowProcessor {
                 };
                 if (md.Flow.processType==='AutoLaunchedFlow') {
                     contentObj.objectName=md.Flow.start.object;
-                    if (md.Flow.status==='Active') {
-                        let pos=-1;
-                        if (md.Flow.start.triggerType==='RecordBeforeSave') {
-                            pos=3;
-                        }
-                        else if (md.Flow.start.triggerType==='RecordAfterSave') {
-                            pos=15;
-                        }
-                        if (-1!=pos) {
-                            contentObj.action=md.Flow.start.recordTriggerType;
-                            this.automation.get(contentObj.objectName).get(pos).items.push     ({index: md.Flow.triggerOrder, meta: md.Flow, name: contentObj.name});                     
+                    if (this.automation.get(contentObj.objectName)) {
+                        if (md.Flow.status==='Active') {
+                            let pos=-1;
+                            if (md.Flow.start.triggerType==='RecordBeforeSave') {
+                                pos=3;
+                            }
+                            else if (md.Flow.start.triggerType==='RecordAfterSave') {
+                                pos=15;
+                            }
+                            if (-1!=pos) {
+                                contentObj.action=md.Flow.start.recordTriggerType;
+                                this.automation.get(contentObj.objectName).get(pos).items.push     ({index: md.Flow.triggerOrder, meta: md.Flow, name: contentObj.name});                     
+                            }
                         }
                     }
                 }

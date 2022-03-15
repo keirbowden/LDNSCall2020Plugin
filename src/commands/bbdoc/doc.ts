@@ -89,12 +89,22 @@ Report generated at report/index.html
     config.version = pkg.version;
     const documentor = new Documentor(sourceDir, reportDir, config, ejsTemplateDirName);
 
+    let result=true;
     this.ux.log('Documenting Org');
-    documentor.document();
-    this.ux.log('Documented Org');
-    this.ux.log('Report generated at ' + join(reportDir, 'index.html'));
+    try {    
+      documentor.document();
+      this.ux.log('Documented Org');
+      this.ux.log('Report generated at ' + join(reportDir, 'index.html'));
+    }
+    catch (e) {
+      result=false;
+      console.log('An error occurred documenting the org - ' + e);
+      console.log('Stack trace:');
+      console.log(e.stack);
+    }
+
     // Return an object to be displayed with --json
-    return { success: true };
+    return { success: result };
   }
 }
 

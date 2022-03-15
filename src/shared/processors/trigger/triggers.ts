@@ -106,14 +106,18 @@ class TriggerProcessor {
                     const triggerPrefix=trigger.name.replace('.trigger', '');
                     actionTriggers.push(triggerPrefix);
                     //console.log('Actions triggers = ' + actionTriggers);
-                    if (trigger.triggerMeta.status==='Active') {
-                        const actionEles=action.split(/\s+/);
-                        if (['insert', 'update'].includes(actionEles[1].toLowerCase())) {
-                            let pos=4;
-                            if (actionEles[0]=='after') {
-                                pos=8;
+                    if (this.automation.get(trigger.objectName)) {
+                        if (trigger.triggerMeta.status==='Active') {
+                            const actionEles=action.split(/\s+/);
+                            if (actionEles[1]) {
+                                if (['insert', 'update'].includes(actionEles[1].toLowerCase())) {
+                                    let pos=4;
+                                    if (actionEles[0]=='after') {
+                                        pos=8;
+                                    }
+                                    this.automation.get(trigger.objectName).get(pos).items.push({index: -1, name: triggerPrefix});
+                                }
                             }
-                            this.automation.get(trigger.objectName).get(pos).items.push({index: -1, name: triggerPrefix});
                         }
                     }
                 })
@@ -217,30 +221,40 @@ class TriggerProcessor {
                                 trigger: body
 
                 };
-                this.extractDetails(mem.member.name, body, contentObj);
-                contentGroup.triggers.push(contentObj);
+                if (this.extractDetails(mem.member.name, body, contentObj)) {
+                    contentGroup.triggers.push(contentObj);
                                 
-                this.content.counter++;
+                    this.content.counter++;    
+                }
             }
         }
     }
 
     extractDetails(name, body, contentObj) {
+        let success=true;
         // console.log('Body = ' + body);
         const prefix=parse(name).name;
-        //console.log('Looking for ' + 'trigger ' + prefix);
+        // console.log('Looking for ' + 'trigger ' + prefix);
         let pos=body.indexOf('trigger ' + prefix );
-        //console.log('Pos = ' + pos);
-        // now skip to 'on'
-        pos=body.indexOf(' on', pos);
-        //console.log('Pos now = ' + pos);
-        var endPos=body.indexOf('(', pos);
-        //console.log('debug', 'End pos = ' + endPos);
-        contentObj.objectName=body.slice(pos + 3, endPos).trim();
-    
-        pos=endPos;
-        endPos=body.indexOf(')', pos);
-        contentObj.actions=body.slice(pos+1, endPos).trim();
+        if (-1==pos) {
+            success=false;
+            console.log('Warning - unable to parse trigger ' + prefix);
+        }
+        else {
+            //console.log('Pos = ' + pos);
+            // now skip to 'on'
+            pos=body.indexOf(' on', pos);
+            //console.log('Pos now = ' + pos);
+            var endPos=body.indexOf('(', pos);
+            //console.log('debug', 'End pos = ' + endPos);
+            contentObj.objectName=body.slice(pos + 3, endPos).trim();
+        
+            pos=endPos;
+            endPos=body.indexOf(')', pos);
+            contentObj.actions=body.slice(pos+1, endPos).trim();            
+        }
+
+        return success;
     }
 }
 
