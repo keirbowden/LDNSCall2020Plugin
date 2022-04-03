@@ -58,8 +58,8 @@ let getSteps = () => {
                     name: 'Duplicate rules',
                     description: 'Executes duplicate rules. If the duplicate rule identifies the record as a duplicate and uses the block action, the record is not saved and no further steps, such as after triggers and workflow rules, are taken.',
                     items: [],
-                    ordered: false,
-                    implemented: false,
+                    ordered: true,
+                    implemented: true,
                     supported: true});
 
     steps.set(7, {index: 7, 

@@ -8,56 +8,57 @@ import { enrichField, addAdditionalFieldInfo } from './objectutils';
 import { getSteps } from '../../ooeutils';
 
 class ObjectProcessor {
-    groups : Map<string, MetadataGroup>;
-    config : DocumentorConfig;
-    mdSetup : Metadata;
-    sourceDir : string;
-    outputDir : string;
-    parentDir : string;
-    indexFile : string;
-    generator : HTMLGenerator;
-    groupFile : string;
+    groups: Map<string, MetadataGroup>;
+    config: DocumentorConfig;
+    mdSetup: Metadata;
+    sourceDir: string;
+    outputDir: string;
+    parentDir: string;
+    indexFile: string;
+    generator: HTMLGenerator;
+    groupFile: string;
     reportSubdir: string;
-    content: ObjectsContent; 
+    content: ObjectsContent;
     missingDescriptions: boolean;
-    private pageLayoutDataByObjectAndFieldName : Map<string, ObjectPageLayoutData[]>;
+    private pageLayoutDataByObjectAndFieldName: Map<string, ObjectPageLayoutData[]>;
     defaultColumns: Array<String>;
     automation: Map<string, Map<number, AutomationStep>>;
     rollUpSummaries: Map<string, Array<string>>;
 
     constructor(config, sourceDir, outputDir, generator, automation, rollUpSummaries) {
-    
-        this.defaultColumns=['Name', 'Label', 'Type', 'Description', 'Info', 'Page Layouts',
-                             'Security', 'Compliance', 'In Use', 'Encrypted'];
-        this.config=config;
-        this.missingDescriptions=false;
 
-        this.generator=generator;
-        this.automation=automation;
-        this.rollUpSummaries=rollUpSummaries;
+        this.defaultColumns = ['Name', 'Label', 'Type', 'Description', 'Info', 'Page Layouts',
+            'Security', 'Compliance', 'In Use', 'Encrypted'];
+        this.config = config;
+        this.missingDescriptions = false;
 
-        this.mdSetup=<Metadata>config['objects'];
-        this.reportSubdir=this.mdSetup.reportDirectory||'objects';
-        this.outputDir=join(outputDir, this.reportSubdir);
+        this.generator = generator;
+        this.automation = automation;
+        this.rollUpSummaries = rollUpSummaries;
+
+        this.mdSetup = <Metadata>config['objects'];
+        this.reportSubdir = this.mdSetup.reportDirectory || 'objects';
+        this.outputDir = join(outputDir, this.reportSubdir);
         createDirectory(this.outputDir);
 
-        this.groups=this.mdSetup.groups;
-        this.parentDir=sourceDir;
-        this.sourceDir=sourceDir+this.mdSetup.subdirectory;
+        this.groups = this.mdSetup.groups;
+        this.parentDir = sourceDir;
+        this.sourceDir = sourceDir + this.mdSetup.subdirectory;
 
-        this.indexFile=join(this.outputDir, '/objects.html');
-    
+        this.indexFile = join(this.outputDir, '/objects.html');
 
-        this.content={groups: [],
-                     missingDescriptions: [],
-                     counter: 0,
-                     description: this.mdSetup.description,
-                     header: {
-                        backgroundColor: (this.mdSetup.backgroundColor||config.backgroundColor),
-                        color: (this.mdSetup.color||config.color)
-                    },
-                    columns: (this.mdSetup.columns||this.defaultColumns)
-                    };
+
+        this.content = {
+            groups: [],
+            missingDescriptions: [],
+            counter: 0,
+            description: this.mdSetup.description,
+            header: {
+                backgroundColor: (this.mdSetup.backgroundColor || config.backgroundColor),
+                color: (this.mdSetup.color || config.color)
+            },
+            columns: (this.mdSetup.columns || this.defaultColumns)
+        };
     }
 
     process() {
@@ -67,24 +68,26 @@ class ObjectProcessor {
             this.processGroup(this.groups[groupName]);
         }
 
+        this.processDuplicateRules();
+
         this.generator.generateHTML(join('objects', 'objects.ejs'), this.content)
-        .then(html => {
-            writeFileSync(this.indexFile, html);    
-        });
+            .then(html => {
+                writeFileSync(this.indexFile, html);
+            });
 
         this.content.groups.forEach(group => {
             this.generator.generateHTML(join('objects', 'group.ejs'), group)
-            .then(html => {
-                this.groupFile=join(this.outputDir, group.name+'.html');
-                writeFileSync(this.groupFile, html);
-            });
+                .then(html => {
+                    this.groupFile = join(this.outputDir, group.name + '.html');
+                    writeFileSync(this.groupFile, html);
+                });
         });
 
         let objectLink: ContentLink = {
             title: 'Objects',
             href: this.reportSubdir + '/objects.html',
             image: this.mdSetup.image,
-            description: this.mdSetup.description, 
+            description: this.mdSetup.description,
             warning: this.missingDescriptions,
             error: false
         };
@@ -101,7 +104,7 @@ class ObjectProcessor {
             let md = parseXMLToJS(join(this.parentDir, 'layouts', entry));
             md = md.Layout;
 
-            const objName:string = entry.substring(0, entry.indexOf('-'));
+            const objName: string = entry.substring(0, entry.indexOf('-'));
             if (md.layoutSections) {
                 if (!Array.isArray(md.layoutSections)) {
                     md.layoutSections = [md.layoutSections];
@@ -117,18 +120,18 @@ class ObjectProcessor {
                                     layoutColumn.layoutItems = [layoutColumn.layoutItems];
                                 }
                                 layoutColumn.layoutItems.forEach(layoutItem => {
-                                    const fieldName:string=String(layoutItem.field);
-                                    let objLayoutData:ObjectPageLayoutData={
+                                    const fieldName: string = String(layoutItem.field);
+                                    let objLayoutData: ObjectPageLayoutData = {
                                         layoutName: entry.substring(entry.indexOf('-') + 1, entry.indexOf('.layout')),
                                         objectName: objName,
                                         fieldName: fieldName,
-                                        behavior : String(layoutItem.behavior)
+                                        behavior: String(layoutItem.behavior)
                                     };
-                                    const key:string=objName+':'+fieldName;
-                                    let layoutsForObjectAndField:ObjectPageLayoutData[]=this.pageLayoutDataByObjectAndFieldName.get(key);
+                                    const key: string = objName + ':' + fieldName;
+                                    let layoutsForObjectAndField: ObjectPageLayoutData[] = this.pageLayoutDataByObjectAndFieldName.get(key);
 
                                     if (!layoutsForObjectAndField) {
-                                        layoutsForObjectAndField=[];
+                                        layoutsForObjectAndField = [];
                                         this.pageLayoutDataByObjectAndFieldName.set(key, layoutsForObjectAndField);
                                     }
 
@@ -140,8 +143,8 @@ class ObjectProcessor {
                 });
             }
         }
-//        console.log('Page layout cache = ');
-//        this.dumpCachedLayouts();
+        //        console.log('Page layout cache = ');
+        //        this.dumpCachedLayouts();
     }
 
     dumpCachedLayouts() {
@@ -152,102 +155,114 @@ class ObjectProcessor {
 
     expandGroups() {
         // first get all of the members from the metadata directory
-        this.mdSetup.members=[];
-        let entries=getDirectoryEntries(this.sourceDir);
-        for (let idx=0, len=entries.length; idx<len; idx++) {
-            let entry=entries[idx];
-            let dirPath=join(this.sourceDir, entry);
+        this.mdSetup.members = [];
+        let entries = getDirectoryEntries(this.sourceDir);
+        for (let idx = 0, len = entries.length; idx < len; idx++) {
+            let entry = entries[idx];
+            let dirPath = join(this.sourceDir, entry);
             if (lstatSync(dirPath).isDirectory()) {
-                let member={name: entry,
-                            subdir: dirPath,
-                            processed: false};
+                let member = {
+                    name: entry,
+                    subdir: dirPath,
+                    processed: false
+                };
                 this.mdSetup.members.push(member);
             }
         }
 
         // now process each of the groups, adding the group member details
         for (let groupName in this.groups) {
-            if ( (this.groups.hasOwnProperty(groupName)) && ('other'!==groupName) ) {
-                let group=this.groups[groupName];
-                group.members=[];
-                if ('other'!=groupName) {
+            if ((this.groups.hasOwnProperty(groupName)) && ('other' !== groupName)) {
+                let group = this.groups[groupName];
+                group.members = [];
+                if ('other' != groupName) {
                     //console.log('Group = ' + groupName);
                     // expand the members based on prefixes/literals
                     for (let member of this.mdSetup.members) {
-                        if ( ((group.objects) && (group.objects.includes(member.name))) ||
-                             ((typeof group.prefix !=='undefined') && member.name.startsWith(group.prefix)) ||
-                             ((typeof group.additional !== 'undefined') && (group.additional.includes(member))) 
-                            ) 
-                        {
-                            let groupMember={member: member,
-                                             group: group};
+                        if (((group.objects) && (group.objects.includes(member.name))) ||
+                            ((typeof group.prefix !== 'undefined') && member.name.startsWith(group.prefix)) ||
+                            ((typeof group.additional !== 'undefined') && (group.additional.includes(member)))
+                        ) {
+                            let groupMember = {
+                                member: member,
+                                group: group
+                            };
                             group.members.push(groupMember);
                         }
-                    }    
+                    }
                 }
             }
         }
 
         // add everything to the catch-all group
-        let group=this.groups['other'];
-        group.members=[];
+        let group = this.groups['other'];
+        group.members = [];
         for (let member of this.mdSetup.members) {
-            var groupMember={member: member,
-                            group: group};
+            var groupMember = {
+                member: member,
+                group: group
+            };
             group.members.push(groupMember);
         }
     }
 
-    processGroup(group : MetadataGroup) {
-        group.started=true;
-        let contentGroup : ObjectGroupContent={title: group.title, 
-                          name: group.name, 
-                          description: group.description, 
-                          link: group.name + '.html', 
-                          objects : [],
-                          menuItems : [],
-                          header: {
-                            backgroundColor: (group.backgroundColor||this.mdSetup.backgroundColor),
-                            color: (group.color||this.mdSetup.color)
-                          },
-                          columns: (group.columns||this.content.columns)
-                };
+    processGroup(group: MetadataGroup) {
+        group.started = true;
+        let contentGroup: ObjectGroupContent = {
+            title: group.title,
+            name: group.name,
+            description: group.description,
+            link: group.name + '.html',
+            objects: [],
+            menuItems: [],
+            header: {
+                backgroundColor: (group.backgroundColor || this.mdSetup.backgroundColor),
+                color: (group.color || this.mdSetup.color)
+            },
+            columns: (group.columns || this.content.columns)
+        };
 
         this.content.groups.push(contentGroup);
         for (let mem of group.members) {
             if (!mem.member.processed) {
-                mem.member.processed=true;
+                mem.member.processed = true;
                 // load the object definition file
                 let md;
                 try {
-                    md=parseXMLToJS(join(mem.member.subdir, mem.member.name + '.object-meta.xml'));
+                    md = parseXMLToJS(join(mem.member.subdir, mem.member.name + '.object-meta.xml'));
                 }
                 catch (e) {
-                    md={CustomObject: 
-                        {label: mem.member.name,
-                         description: 'Object metadata not in version control'
-                        }}
+                    md = {
+                        CustomObject:
+                        {
+                            label: mem.member.name,
+                            description: 'Object metadata not in version control'
+                        }
+                    }
                 }
 
-                let label:string=md.CustomObject.label||mem.member.name;
-                contentGroup.menuItems.push({href: mem.member.name, 
-                                             description: '',
-                                             title: label,
-                                             warning: false,
-                                             error: false
-                                            });
+                let label: string = md.CustomObject.label || mem.member.name;
+                contentGroup.menuItems.push({
+                    href: mem.member.name,
+                    description: '',
+                    title: label,
+                    warning: false,
+                    error: false
+                });
 
-                let contentObj:ObjectContent={name: mem.member.name, 
-                                label: label,
-                                sfObject: md.CustomObject,
-                                fields: [],
-                                validationRules: [],
-                                recordTypes: [],
-                                badges: []};
+                let contentObj: ObjectContent = {
+                    name: mem.member.name,
+                    label: label,
+                    sfObject: md.CustomObject,
+                    fields: [],
+                    validationRules: [],
+                    recordTypes: [],
+                    badges: []
+                };
                 contentGroup.objects.push(contentObj);
-    
-                if (null==this.automation.get(mem.member.name)) {
-                    let automationSteps=getSteps();
+
+                if (null == this.automation.get(mem.member.name)) {
+                    let automationSteps = getSteps();
 
                     this.automation.set(mem.member.name, automationSteps);
                 }
@@ -260,56 +275,83 @@ class ObjectProcessor {
     }
 
     processValidationRules(member, contentObj) {
-        let valRulesDir=join(member.subdir, 'validationRules');
-        let valRules=getDirectoryEntries(valRulesDir);
-        for (let idx=0, len=valRules.length; idx<len; idx++) {
-            let valRuleMd=parseXMLToJS(join(valRulesDir, valRules[idx]));
+        let valRulesDir = join(member.subdir, 'validationRules');
+        let valRules = getDirectoryEntries(valRulesDir);
+        for (let idx = 0, len = valRules.length; idx < len; idx++) {
+            let valRuleMd = parseXMLToJS(join(valRulesDir, valRules[idx]));
             contentObj.validationRules.push(valRuleMd.ValidationRule);
             if (valRuleMd.ValidationRule.active) {
-                this.automation.get(member.name).get(5).items.push({index: -1, name: valRuleMd.ValidationRule.fullName});
+                this.automation.get(member.name).get(5).items.push({ index: -1, name: valRuleMd.ValidationRule.fullName });
+            }
+        }
+    }
+
+    processDuplicateRules() {
+        const entries = getDirectoryEntries(join(this.parentDir, 'duplicateRules'));
+
+        for (let idx = 0, len = entries.length; idx < len; idx++) {
+            const entry = entries[idx];
+            let md = parseXMLToJS(join(this.parentDir, 'duplicateRules', entry));
+            md = md.DuplicateRule;
+
+            const objName: string = entry.substring(0, entry.indexOf('.'));
+            if (md.isActive) {
+                if (!Array.isArray(md.duplicateRuleMatchRules)) {
+                    md.duplicateRuleMatchRules = [md.duplicateRuleMatchRules];
+                }
+                let mrs='<ul>';
+                md.duplicateRuleMatchRules.forEach(matchingRule => {
+                    mrs+='<li>' + matchingRule.matchingRule + '</li>';
+                });
+
+                mrs+='</ul><hr/>';
+    
+                let automationForObject=this.automation.get(objName);
+                automationForObject.get(6).items.push({ index: md.sortOrder,
+                name: '<b>' + md.masterLabel + '</b>, which uses the following rules to match records: <br/>' + mrs});
             }
         }
     }
 
     processRecordTypes(member, contentObj) {
-        let recTypesDir=join(member.subdir, 'recordTypes');
-        let recTypes=getDirectoryEntries(recTypesDir);
-        for (let idx=0, len=recTypes.length; idx<len; idx++) {
-            let recTypeMd=parseXMLToJS(join(recTypesDir, recTypes[idx]));
-            if (recTypeMd.RecordType){
+        let recTypesDir = join(member.subdir, 'recordTypes');
+        let recTypes = getDirectoryEntries(recTypesDir);
+        for (let idx = 0, len = recTypes.length; idx < len; idx++) {
+            let recTypeMd = parseXMLToJS(join(recTypesDir, recTypes[idx]));
+            if (recTypeMd.RecordType) {
                 contentObj.recordTypes.push(recTypeMd.RecordType);
             }
         }
     }
 
     processFields(member, contentObj) {
-        let fieldsDir=join(member.subdir, 'fields');
-        let fields=getDirectoryEntries(fieldsDir);
-        let badges=new Map();
-        for (let idx=0, len=fields.length; idx<len; idx++) {
-            let fldMd=parseXMLToJS(join(fieldsDir, fields[idx]));
+        let fieldsDir = join(member.subdir, 'fields');
+        let fields = getDirectoryEntries(fieldsDir);
+        let badges = new Map();
+        for (let idx = 0, len = fields.length; idx < len; idx++) {
+            let fldMd = parseXMLToJS(join(fieldsDir, fields[idx]));
             enrichField(member.name, fldMd.CustomField, this.parentDir);
-            let field=this.outputField(member, fldMd.CustomField);
-            if (field.background=='orange') {
-                this.missingDescriptions=true;
+            let field = this.outputField(member, fldMd.CustomField);
+            if (field.background == 'orange') {
+                this.missingDescriptions = true;
                 this.content.missingDescriptions.push(member.name + '.' + field.fullName);
             }
 
-            const key : string = contentObj.name + ':' + field.fullName;
-            field.pageLayoutInfo=this.pageLayoutDataByObjectAndFieldName.get(key);
+            const key: string = contentObj.name + ':' + field.fullName;
+            field.pageLayoutInfo = this.pageLayoutDataByObjectAndFieldName.get(key);
             contentObj.fields.push(field);
-            if ( (!field.pageLayoutInfo) && 
-                 (''==field.background) && 
-                 (this.content.columns.includes('Page Layouts')) ) {
-                field.background='#f5dfea';
+            if ((!field.pageLayoutInfo) &&
+                ('' == field.background) &&
+                (this.content.columns.includes('Page Layouts'))) {
+                field.background = '#f5dfea';
             }
-            if ( ('Lookup'==field.fullType) || ('MasterDetail'==field.fullType) ) {
-                let relationshipCount=badges.get('Relationships')||0;
+            if (('Lookup' == field.fullType) || ('MasterDetail' == field.fullType)) {
+                let relationshipCount = badges.get('Relationships') || 0;
                 badges.set('Relationships', ++relationshipCount);
             }
 
-            if (-1!=field.fullName.indexOf('__c')) {
-                let fieldCount=badges.get('Fields')||0;
+            if (-1 != field.fullName.indexOf('__c')) {
+                let fieldCount = badges.get('Fields') || 0;
                 badges.set('Fields', ++fieldCount);
             }
         }
@@ -317,11 +359,11 @@ class ObjectProcessor {
         badges.forEach((value, key) => {
             contentObj.badges.push(key + ' : ' + value);
         });
-        contentObj.badges=contentObj.badges.sort();
+        contentObj.badges = contentObj.badges.sort();
     }
 
     outputField(member, fldMd) {
-        let field: ObjectFieldContent={
+        let field: ObjectFieldContent = {
             fullName: fldMd.fullName.toString(),
             label: fldMd.label,
             background: "",
@@ -333,73 +375,73 @@ class ObjectProcessor {
             complianceGroup: "",
             businessStatus: "",
             encrypted: ""
-        
+
         };
 
-        if ( (!field.label) && (-1==field.fullName.indexOf('__c')) ) {
-            field.label='N/A (standard field)';
+        if ((!field.label) && (-1 == field.fullName.indexOf('__c'))) {
+            field.label = 'N/A (standard field)';
         }
-    
-        if ( (!field.description) && (-1==field.fullName.indexOf('__c')) ) {
-            field.description='N/A (standard field)';
+
+        if ((!field.description) && (-1 == field.fullName.indexOf('__c'))) {
+            field.description = 'N/A (standard field)';
         }
-        
-        field.background='';  // change this if we need to callout anything
+
+        field.background = '';  // change this if we need to callout anything
         if (typeof field.description === 'undefined') {
-            field.background='orange';
+            field.background = 'orange';
         }
         else {
             let todoPos;
-            let descStr=field.description.toString().toLowerCase();
-            if (-1!=(todoPos=descStr.indexOf('todo'))) {
+            let descStr = field.description.toString().toLowerCase();
+            if (-1 != (todoPos = descStr.indexOf('todo'))) {
                 if (this.config.redact) {
-                    field.description=descStr.substring(0, todoPos);
+                    field.description = descStr.substring(0, todoPos);
                 }
                 else {
-                    field.background='#f4e241';
+                    field.background = '#f4e241';
                 }
             }
-            else if (-1!=descStr.indexOf('deprecated')) {
-                field.background='#f28a8a';
+            else if (-1 != descStr.indexOf('deprecated')) {
+                field.background = '#f28a8a';
             }
         }
-        
-        var type=fldMd.type;
+
+        var type = fldMd.type;
         if (type) {
-            type=type.toString();
+            type = type.toString();
             if (fldMd.formula) {
-                type='Formula (' + type + ')';
+                type = 'Formula (' + type + ')';
             }
-            else if (type=='Html') {
-                type='Rich TextArea';
+            else if (type == 'Html') {
+                type = 'Rich TextArea';
             }
         }
         else {
-            type="N/A (standard field)";
+            type = "N/A (standard field)";
         }
-    
-        field.securityClassification=fldMd.securityClassification||'';
 
-        field.complianceGroup=fldMd.complianceGroup||'';
-        field.businessStatus=fldMd.businessStatus||'';
+        field.securityClassification = fldMd.securityClassification || '';
+
+        field.complianceGroup = fldMd.complianceGroup || '';
+        field.businessStatus = fldMd.businessStatus || '';
 
         if (typeof fldMd.encrypted != 'undefined') {
-            var encrypted=fldMd.encrypted;
+            var encrypted = fldMd.encrypted;
             if (encrypted) {
-                var encryptionScheme=fldMd.encryptionScheme;
-                field.encrypted=encrypted + '(' + encryptionScheme + ')';
+                var encryptionScheme = fldMd.encryptionScheme;
+                field.encrypted = encrypted + '(' + encryptionScheme + ')';
             }
             else {
-                field.encrypted=encrypted;
+                field.encrypted = encrypted;
             }
         }
-        
-        field.additionalInfo=addAdditionalFieldInfo(member.name, fldMd, type, this.rollUpSummaries);
-        field.fullType=type;
+
+        field.additionalInfo = addAdditionalFieldInfo(member.name, fldMd, type, this.rollUpSummaries);
+        field.fullType = type;
 
         return field;
     }
 
 }
 
-export {ObjectProcessor}
+export { ObjectProcessor }
