@@ -152,7 +152,7 @@ class FlowProcessor {
                                 flowMeta: md.Flow
                 };
                 if (md.Flow.processType==='AutoLaunchedFlow') {
-                    contentObj.objectName=md.Flow.start.object;
+                    contentObj.objectName=md.Flow.start?.object;
                     if (this.automation.get(contentObj.objectName)) {
                         if (md.Flow.status==='Active') {
                             let pos=-1;

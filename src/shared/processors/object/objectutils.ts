@@ -64,7 +64,11 @@ let addAdditionalFieldInfo = (objName, field, type, rollUpSummaries) => {
                         var vsName=field.valueSet.valueSetName;
                         result+='<b>Global Value Set (' + vsName +')</b><br/>';
                         if (field.gvs) {
-                            field.gvs.GlobalValueSet.customValue.forEach(item => result+='&nbsp;&nbsp;' + item.fullName + '<br/>');
+                            if(field.gvs === Array){
+                                field.gvs.GlobalValueSet.customValue.forEach(item => result += '&nbsp;&nbsp;' + item.fullName + '<br/>');
+                            } else {
+                                result += '&nbsp;&nbsp;' + field.gvs.GlobalValueSet.customValue.fullName + '<br/>';
+                            }
                         }
                         else {
                             result+='Not version controlled';
