@@ -33,6 +33,7 @@
                 <% content.flows.forEach(function(flow){ %>
                     <tr>
                         <td><%= flow.name %></td>
+                        <td><%= flow.flowMeta.processType %></td>
                         <td><%= flow.objectName %></td>
                         <td><%= flow.action %></td>
                         <td><%= flow.flowMeta.status %></td>
