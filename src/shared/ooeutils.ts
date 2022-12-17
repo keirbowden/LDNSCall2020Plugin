@@ -130,19 +130,19 @@ let getSteps = () => {
                     supported: true});
 
     steps.set(14, {index: 14,
-                    name: 'Entitlement Rules',
-                    description: 'Executes entitlement rules',
-                    items: [],
-                    ordered: false,
-                    implemented: false,
-                    supported: true});
-
-    steps.set(15, {index: 15,
                     name: 'After Save Flows',
                     description: ' Executes record-triggered flows that are configured to run after the record is saved.',
                     items: [],
                     ordered: true,
                     implemented: true,
+                    supported: true});
+
+    steps.set(15, {index: 15,
+                    name: 'Entitlement Rules',
+                    description: 'Executes entitlement rules',
+                    items: [],
+                    ordered: false,
+                    implemented: false,
                     supported: true});
 
     steps.set(16, {index: 16,

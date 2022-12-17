@@ -14,7 +14,7 @@ INSTALLING
   $ sfdx plugins
     @salesforce/sfdx-diff 0.0.6
        ...
-    bbdoc 4.0.5
+    bbdoc 4.1.0
 
 USAGE
   $ sfdx bbdoc:doc -r <string> -s <string> [-c <string>] [--json] [--loglevel 
@@ -41,6 +41,6 @@ EXAMPLE
   Report generated at report/index.html
 ```
 
-_See code: [src/commands/bbdoc/doc.ts](https://github.com/keirbowden/LDNSCall2020Plugin/blob/V3.4.0/src/commands/bbdoc/doc.ts)_
+_See code: [src/commands/bbdoc/doc.ts](https://github.com/keirbowden/LDNSCall2020Plugin/blob/V4.1.0/src/commands/bbdoc/doc.ts)_
 
 For more information, including how to configure the plug-in for a specific codebase, see the [Org Documentor Documented](https://orgdoc.bobbuzzard.org/)

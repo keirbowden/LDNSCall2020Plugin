@@ -104,6 +104,12 @@ class OrderOfExecutionProcessor {
                 let objFile=join(this.outputDir, objectContent.ele.name+'.html');
                 writeFileSync(objFile, html);
             });
+
+            this.generator.generateHTML(join('orderofexecution', 'objectimage.ejs'),  objectContent)
+            .then(html => {
+                const objFile=join(this.outputDir, objectContent.ele.name + '_image.html');
+                writeFileSync(objFile, html);
+            });
         });
 
         const ooeLink = {

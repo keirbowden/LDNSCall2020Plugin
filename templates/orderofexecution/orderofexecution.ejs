@@ -24,12 +24,14 @@
             <table class="table">
                 <tr>
                     <th>Object</th>
-                    <th>Detail</th>
+                    <th>Table Detail</th>
+                    <th>Image Detail</th>
                 </tr>
                 <% content.objectAutomation.forEach(function(ele){ %>
                     <tr>
                         <td><%= ele.name %></td>
                         <td><a href="<%= ele.name %>.html">Click to View</a></td>
+                        <td><a href="<%= ele.name %>_image.html">Click to  View</a></td>
                     </tr>
                 <% }); %>
             </table>

@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <%- include ('../common/styles', {header: content.header}) %>
+        <%- include ('ooeimagestyles', {header: content.header}) %>
+    </head>
+
+    <body>
+        <div class="doc-header">
+            <nav aria-label="breadcrumb" class="container">
+                <ol class="breadcrumb doc-header">
+                    <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="orderofexecution.html">Order of Execution</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><%= content.title %></li>
+                </ol>
+            </nav>
+            <div class="jumbotron jumbotron-fluid doc-header">
+                <div class="container">
+                    <h1 class="display-4"><%= content.title %></h1>
+                    <p class="lead"><%= content.description %></p>
+                </div>
+            </div>            
+        </div>
+        <div class="container-fluid">
+
+            <div>
+            <main>
+                <img src="../images/ooe.png" usemap="#ooe-steps" />
+                <map name="ooe-steps">
+s                  <area alt="Before Save Flows" 
+                  title="Before Save Flows" 
+                  href="#ooe-3" 
+                  coords="847,259,986,308" 
+                  shape="rect">
+                  <area alt="Before Triggers" title="Before Triggers" href="#ooe-4" coords="846,330,984,374" shape="rect">
+                  <area alt="System Validation" title="System Validation" href="#ooe-5" coords="1018,283,1157,418" shape="rect">
+                  <area alt="Duplicate Rules" title="Duplicate Rules" href="#ooe-6" coords="1181,349,1321,391" shape="rect">
+                  <area alt="After Triggers" title="After Triggers" href="#ooe-8" coords="770,463,911,512" shape="rect">
+                  <area alt="After Save Flows" title="After Save Flows" href="#ooe-14" coords="440,632,581,677" shape="rect">
+                  <area alt="Roll Up Summaries" title="Roll Up Summaries" href="#ooe-16" coords="534,836,677,922" shape="rect">
+            </map>
+          
+            <% content.ele.automation.forEach(function(obj){ %>
+                <div class="popup" id="<%= 'ooe-' + obj.index %>">
+                  <div class="card mb-4" style="width: 100%">
+                    <div class="card-header">
+                        <b><a name="<%= 'step' + obj.index %>"> <%= obj.index %>. <%= obj.name %></a></b>
+                        <% if (obj.ordered) { %>
+                            <span class="badge  badge-pill badge-success">ordered</span> 
+                        <% } %>
+                    </div>
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                              <div class="col-sm">
+                                 <%
+                                      if (!obj.supported) {
+                                 %>
+                                        <p class="alert alert-danger">This step is not available for automation</p>
+                                <%    } else if (!obj.implemented) { %>
+                                        <p class="alert alert-warning">Not yet implemented in the Org Documentor. </p>
+                                <%      
+                                    } else if (obj.items.length===0) { %>
+                                        <div class="text-primary"><i>No automation steps defined.</i></div>
+                                <% } else { 
+                                    obj.items.forEach(step => {
+                                        %>
+                                        <div>
+                                            <div>
+                                                <% if (obj.ordered) { %>
+                                                    <b><%= step.index %>.</b>&nbsp;
+                                                <% } %>
+                                                <%- step.name %>
+                                            </div>
+                                        </div>        
+                                    <% });
+                                } 
+                                if (obj.notes) { %>
+                                    <p class="alert alert-warning"><%= obj.notes %></p>
+                                <% } %>
+                              </div>
+                              <div class="col-sm">
+                                <details class="mb-3">
+                                    <summary>Description</summary>
+                                    <p><%- obj.description %></p>
+            
+                                  </details>
+                              </div>
+                            </div>
+                            <a href="#" class="btn btn-primary">Close</a>
+                          </div>                        
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+    </main>
+</div>
+<br/>
+
+        <%- include ('../common/footer') %>
+    </body>
+
+</html>
